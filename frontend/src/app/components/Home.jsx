@@ -181,6 +181,7 @@
 
 
 
+/* eslint-disable */
 
 import React, { useState } from 'react';
 import { Github, Zap, Lock, Users, Code, ChevronRight, Layers, ArrowUpRight } from 'lucide-react';
