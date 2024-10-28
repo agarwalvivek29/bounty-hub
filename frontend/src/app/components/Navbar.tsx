@@ -1,105 +1,152 @@
 "use client";
-import { useState, useEffect } from "react";
-import Image from "next/image";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ConnectButton, lightTheme, useActiveAccount } from "thirdweb/react";
 import { client } from "../client";
-import { FaGithub, FaChevronDown } from "react-icons/fa"; // Import ChevronDown for dropdown
-import styles from "./Navbar.module.css";
+import { FaGithub } from "react-icons/fa";
+import { ChevronDown, Menu, X } from "lucide-react";
 
 const Navbar = () => {
-    const account = useActiveAccount();
-    const [showGithubModal, setShowGithubModal] = useState(false);
-    const [showDropdown, setShowDropdown] = useState(false); // State for dropdown visibility
+  const account = useActiveAccount();
+  const pathname = usePathname();
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        if (account) {
-            // Show the modal when the wallet is connected
-            console.log("account: ",account)
-            setShowGithubModal(true);
-        }
-    }, [account]);
-
-    const closeModal = () => {
-        setShowGithubModal(false);
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
     };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-    const toggleDropdown = () => {
-        setShowDropdown(!showDropdown); // Toggle dropdown on click
-    };
+  useEffect(() => {
+    setShowDropdown(false);
+    setShowMobileMenu(false);
+  }, [pathname]);
 
-    return (
-        <div className={`bg-black mx-auto max-w-10xl px-2 sm:px-6 lg:px-8 shadow-md ${styles.navbar}`}>
-            <div className="relative flex h-16 items-center justify-between">
-                <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                    <div className="flex flex-shrink-0 items-center">
-                        <div className="flex items-center space-x-1">
-                            <FaGithub className="text-violet-300" style={{ fontSize: "2rem" }} /> {/* Increased size of GitHub Icon */}
-                            <h1 className="font-bold" style={{ fontSize: "2rem" }}>
-                                <span className={styles.textGradient}>Bounty</span>
-                                <span className={styles.textGradient2}>Dispenser</span>
-                            </h1>
-                        </div>
-                    </div>
-                    <div className="hidden sm:ml-6 sm:block">
-                        <div className="relative flex items-center space-x-4"> {/* Add space for the "Issue" button */}
-                            {account && (
-                                <>
-                                    <button
-                                        style={{ border: "solid 3px #7c3aed" }}
-                                        onClick={toggleDropdown}
-                                        className="rounded-md px-3 py-2 text-lg font-medium text-violet-700 hover:text-white transition duration-200 ease-in-out flex items-center"
-                                    >
-                                        Dashboard <FaChevronDown className="ml-2" /> {/* Add dropdown arrow */}
-                                    </button>
-
-                                    <Link href="/bounties"> {/* Link to /issues */}
-                                        <button className="rounded-md px-3 py-2 text-lg font-medium text-violet-700 hover:text-white transition duration-200 ease-in-out">
-                                            Bounties
-                                        </button>
-                                    </Link>
-                                </>
-                            )}
-
-                            {showDropdown && (
-                                <div className="absolute mt-2 w-48 rounded-md shadow-lg bg-gray-950 ring-1 ring-black ring-opacity-5">
-                                    <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                                        <Link href="/manager">
-                                            <p className="block px-4 py-2 text-sm text-white-700 hover:bg-gray-100 hover:text-violet-700" role="menuitem">
-                                                Manager
-                                            </p>
-                                        </Link>
-                                        <Link href="/contributer">
-                                            <p className="block px-4 py-2 text-sm text-white-700 hover:bg-gray-100 hover:text-violet-700" role="menuitem">
-                                                Contributor
-                                            </p>
-                                        </Link>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-                <div className="flex items-center">
-                    <Link href="/api/auth/signin">
-                        <button className="flex items-center px-4 py-3 mx-1 bg-violet-600 text-white font-semibold text-sm rounded-lg shadow-md hover:bg-violet-700 transition duration-200 ease-in-out">
-                            <FaGithub className="mr-2 text-white" style={{ fontSize: "1.5rem" }} />
-                            Github Signin
-                        </button>
-                    </Link>
-                    <ConnectButton
-                        client={client}
-                        theme={lightTheme()}
-                        detailsButton={{
-                            style: {
-                                maxHeight: "50px"
-                            }
-                        }}
-                    />
-                </div>
+  return (
+    <nav className="sticky top-0 z-50 bg-[#0d0d1a]/90 backdrop-blur-md border-b border-white/10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center text-white font-bold text-xs">
+              B
             </div>
+            <span className="font-bold text-white text-lg tracking-tight">BountyHub</span>
+          </Link>
+
+          {/* Desktop Nav */}
+          <div className="hidden sm:flex items-center gap-1">
+            {account && (
+              <>
+                <Link
+                  href="/bounties"
+                  className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                >
+                  Bounties
+                </Link>
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    onClick={() => setShowDropdown(!showDropdown)}
+                    className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                  >
+                    Dashboard
+                    <ChevronDown
+                      size={14}
+                      className={`transition-transform duration-200 ${showDropdown ? "rotate-180" : ""}`}
+                    />
+                  </button>
+                  {showDropdown && (
+                    <div className="absolute top-full left-0 mt-2 w-44 bg-[#111827] border border-white/10 rounded-xl shadow-2xl shadow-black/50 overflow-hidden">
+                      <Link
+                        href="/manager"
+                        className="block px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+                      >
+                        Maintainer
+                      </Link>
+                      <Link
+                        href="/contributer"
+                        className="block px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+                      >
+                        Contributor
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Right side */}
+          <div className="flex items-center gap-3">
+            <a
+              href="https://github.com/apps/tst-app-vivk/installations/new"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-sm text-gray-400 hover:text-white border border-white/10 hover:border-white/25 rounded-lg transition-colors"
+            >
+              <FaGithub size={15} />
+              Install App
+            </a>
+            <ConnectButton
+              client={client}
+              theme={lightTheme()}
+              detailsButton={{ style: { maxHeight: "40px", minWidth: "120px" } }}
+            />
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="sm:hidden p-2 text-gray-400 hover:text-white transition-colors"
+            >
+              {showMobileMenu ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </div>
-    );
+
+        {/* Mobile Menu */}
+        {showMobileMenu && (
+          <div className="sm:hidden border-t border-white/10 py-3 space-y-0.5">
+            {account && (
+              <>
+                <Link
+                  href="/bounties"
+                  className="block px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                >
+                  Bounties
+                </Link>
+                <Link
+                  href="/manager"
+                  className="block px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                >
+                  Maintainer Dashboard
+                </Link>
+                <Link
+                  href="/contributer"
+                  className="block px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                >
+                  Contributor Dashboard
+                </Link>
+              </>
+            )}
+            <a
+              href="https://github.com/apps/tst-app-vivk/installations/new"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+            >
+              <FaGithub size={15} />
+              Install GitHub App
+            </a>
+          </div>
+        )}
+      </div>
+    </nav>
+  );
 };
 
 export default Navbar;
