@@ -6,9 +6,9 @@ import Navbar from "./components/Navbar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "thirdweb SDK + Next starter",
+  title: "BountyHub — On-chain Bounties for GitHub",
   description:
-    "Starter template for using thirdweb SDK with Next.js App router",
+    "Incentivize open-source contributions with on-chain bounties on Base. Create bounties with a GitHub comment, pay contributors automatically.",
 };
 
 export default function RootLayout({

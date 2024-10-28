@@ -1,22 +1,26 @@
-// import { Octokit } from "octokit";
-// import { createAppAuth } from "@octokit/auth-app";
+import dotenv from "dotenv";
+import app from "./app";
+import { createNodeMiddleware } from "@octokit/webhooks";
+import http from "http";
 
-// const octokit = new Octokit({
-//   authStrategy: createAppAuth,
-//   auth: {
-//     appId: parseInt(process.env.APP_ID || "", 10),
-//     privateKey: process.env.PRIVATE_KEY || "",
-//     installationId: 53678700,  // Replace with a static ID for testing
-//   },
-// });
+dotenv.config();
 
-// async function testAuth() {
-//   try {
-//     const { data } = await octokit.request("GET /app");
-//     console.log("App data:", data);
-//   } catch (error) {
-//     console.error("Auth failed:", error);
-//   }
-// }
+const port = process.env.PORT || 3000;
+const path = "/api/webhook";
+const host = process.env.HOST || "localhost";
+const localWebhookUrl = `http://${host}:${3000}${path}`;
 
-// testAuth();
+const middleware = createNodeMiddleware(app.webhooks, { path });
+
+app.webhooks.onError((error) => {
+  if (error.name === "AggregateError") {
+    console.error(`Error processing request: ${error.event}`);
+  } else {
+    console.error(error);
+  }
+});
+
+http.createServer(middleware).listen(port, () => {
+  console.log(`Server is listening for events at: ${localWebhookUrl}`);
+  console.log("Press Ctrl + C to quit.");
+});
