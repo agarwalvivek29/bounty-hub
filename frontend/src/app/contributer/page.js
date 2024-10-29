@@ -1,402 +1,13 @@
-/* eslint-disable */
+"use client";
 
-"use client"
-
-// import { useState } from 'react';
-// import { Github, Wallet, ExternalLink, Award, GitFork, Flame, Trophy } from 'lucide-react';
-
-// const ContributorDashboard = () => {
-//   const [earnings, setEarnings] = useState(1250);
-//   const [rank, setRank] = useState(42);
-//   const [streak, setStreak] = useState(7);
-
-//   const Avatar = ({ src, alt }) => (
-//     <div className="relative inline-block w-35 h-35 mb-4 ring-2 ring-purple-500 rounded-full overflow-hidden">
-//       <img src={src} alt={alt} className="w-full h-full object-cover" />
-//     </div>
-//   );
-
-//   const Badge = ({ variant, children }) => (
-//     <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${variant === "success" ? "bg-green-600 text-green-100" : variant === "outline" ? "border border-purple-400 text-purple-400" : variant === "secondary" ? "bg-gray-600 text-gray-200" : "bg-yellow-600 text-yellow-100"}`}>
-//       {children}
-//     </span>
-//   );
-
-//   const Button = ({ children, onClick }) => (
-//     <button onClick={onClick} className="py-2 px-4 text-white bg-purple-600 rounded hover:bg-purple-500 transition-colors">
-//       {children}
-//     </button>
-//   );
-
-//   const Card = ({ title, description, children }) => (
-//     <div className="bg-gray-800 border border-purple-500 rounded-lg shadow-md p-4 mb-6">
-//       <div className="mb-2">
-//         <h3 className="text-gray-200 font-bold text-lg">{title}</h3>
-//         {description && <p className="text-gray-400 text-sm">{description}</p>}
-//       </div>
-//       {children}
-//     </div>
-//   );
-
-//   const Progress = ({ value }) => (
-//     <div className="relative w-full h-2 bg-gray-600 rounded">
-//       <div className="absolute left-0 top-0 h-2 bg-purple-500 rounded" style={{ width: `${value}%` }}></div>
-//     </div>
-//   );
-
-//   const Table = ({ children }) => (
-//     <table className="min-w-full bg-gray-700">{children}</table>
-//   );
-
-//   const TableHeader = ({ children }) => (
-//     <thead>{children}</thead>
-//   );
-
-//   const TableBody = ({ children }) => (
-//     <tbody>{children}</tbody>
-//   );
-
-//   const TableRow = ({ children }) => (
-//     <tr className="border-b border-gray-600">{children}</tr>
-//   );
-
-//   const TableHead = ({ children }) => (
-//     <th className="py-2 text-left text-gray-300">{children}</th>
-//   );
-
-//   const TableCell = ({ children }) => (
-//     <td className="py-2 text-gray-200">{children}</td>
-//   );
-
-//   return (
-//     <div className="flex h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-gray-100">
-//       {/* Sidebar */}
-//       <aside className="w-64 bg-gray-800 p-6 shadow-md">
-//         <div className="flex flex-col items-center mb-6">
-//           <Avatar src="https://github.com/shadcn.png" alt="@shadcn" />
-//           <h2 className="text-xl font-bold text-gray-100">John Doe</h2>
-//           <p className="text-sm text-gray-400">Full-stack Developer</p>
-//         </div>
-//         <div className="space-y-4">
-//           <div className="flex items-center space-x-2 text-gray-300">
-//             <Github className="w-5 h-5" />
-//             <span className="text-sm">@johndoe</span>
-//           </div>
-//           <div className="flex items-center space-x-2 text-gray-300">
-//             <Wallet className="w-5 h-5" />
-//             <span className="text-sm truncate">0x1234...5678</span>
-//           </div>
-//         </div>
-//         <p className="mt-6 text-sm text-gray-400">
-//           Passionate about open source and building cool stuff. Always learning, always coding.
-//         </p>
-//       </aside>
-
-//       {/* Main Content */}
-//       <main className="flex-1 p-8 overflow-auto">
-//         <h1 className="text-3xl font-bold mb-8 text-gray-100">Contributor Dashboard</h1>
-        
-//         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-//           {/* Earnings Card */}
-//           <Card title="Total Earnings" description="+$250 from last month">
-//             <div className="text-2xl font-bold text-gray-100">${earnings}</div>
-//             <Award className="h-8 w-8 text-purple-400 mt-2" />
-//           </Card>
-
-//           {/* Rank Card */}
-//           <Card title="Global Rank" description="Top 5% of contributors">
-//             <div className="text-2xl font-bold text-gray-100">#{rank}</div>
-//             <Trophy className="h-8 w-8 text-purple-400 mt-2" />
-//           </Card>
-
-//           {/* Streak Card */}
-//           <Card title="Contribution Streak" description="Days of continuous contribution">
-//             <div className="text-2xl font-bold text-gray-100">{streak} days</div>
-//             <Progress value={(streak / 30) * 100} className="mt-2" />
-//             <Flame className="h-8 w-8 text-purple-400 mt-2" />
-//           </Card>
-//         </div>
-
-//         {/* Assigned Issues Table */}
-//         <Card title="Assigned Issues" description="Issues you're currently working on or assigned to.">
-//           <Table>
-//             <TableHeader>
-//               <TableRow className="bg-gray-700">
-//                 <TableHead>Issue</TableHead>
-//                 <TableHead>Status</TableHead>
-//                 <TableHead>Actions</TableHead>
-//               </TableRow>
-//             </TableHeader>
-//             <TableBody>
-//               <TableRow>
-//                 <TableCell>
-//                   <a href="#" className="text-purple-400 hover:underline">Fix broken links</a>
-//                 </TableCell>
-//                 <TableCell>
-//                   <Badge variant="success">In Progress</Badge>
-//                 </TableCell>
-//                 <TableCell>
-//                   <Button>View</Button>
-//                 </TableCell>
-//               </TableRow>
-//               <TableRow>
-//                 <TableCell>
-//                   <a href="#" className="text-purple-400 hover:underline">Update README</a>
-//                 </TableCell>
-//                 <TableCell>
-//                   <Badge variant="outline">Pending Review</Badge>
-//                 </TableCell>
-//                 <TableCell>
-//                   <Button>View</Button>
-//                 </TableCell>
-//               </TableRow>
-//               <TableRow>
-//                 <TableCell>
-//                   <a href="#" className="text-purple-400 hover:underline">Add new feature</a>
-//                 </TableCell>
-//                 <TableCell>
-//                   <Badge variant="secondary">Completed</Badge>
-//                 </TableCell>
-//                 <TableCell>
-//                   <Button>View</Button>
-//                 </TableCell>
-//               </TableRow>
-//             </TableBody>
-//           </Table>
-//         </Card>
-//       </main>
-//     </div>
-//   );
-// };
-
-// export default ContributorDashboard;
-
-
-// import { useState, useEffect } from 'react';
-// import { Github, Wallet, Award, Flame, Trophy } from 'lucide-react';
-// import { useActiveAccount, useReadContract } from "thirdweb/react";
-// import { getContract, defineChain } from "thirdweb";
-// import { contractABI } from '../constants/contract';
-// import { client } from '../client';
-
-// const contract = getContract({
-//   client,
-//   chain: defineChain(84532),
-//   address: "0x96111652DB352b814697e79A846E8CD9C8e11196",
-//   abi: contractABI,
-// });
-
-// // Helper function to format BigInt to ETH string
-// const formatEth = (wei) => {
-//   if (!wei) return '0.00';
-//   const ethValue = Number(wei) / 1000000000000;
-//   return ethValue;
-// };
-
-// const ContributorDashboard = () => {
-//   const account = useActiveAccount();
-//   const [rank, setRank] = useState(42);
-//   const [streak, setStreak] = useState(7);
-//   const [assignedIssues, setAssignedIssues] = useState([]);
-
-//   const { data: totalEarnings, isLoading: isEarningsLoading } = useReadContract({
-//     contract,
-//     method: "function getContributorEarnedfunds(address _address) view returns (uint256)",
-//     params: [account?.address]
-//   });
-
-//   const { data: bounties, isLoading: isBountiesLoading } = useReadContract({
-//     contract,
-//     method: "function getBounties() view returns ((uint256 id, string issueLink, uint256 amount, address creator, address rewardedTo, address[] assignedTo, bool isOpen, bool isCompleted, string rewardee_username)[])",
-//     params: []
-//   });
-
-//   useEffect(() => {
-//     if (bounties && account) {
-//       const filteredIssues = bounties.filter(bounty => 
-//         bounty.rewardedTo === account.address || bounty.assignedTo.includes(account.address)
-//       );
-//       setAssignedIssues(filteredIssues);
-//     }
-//   }, [bounties, account]);
-
-//   const Avatar = ({ src, alt }) => (
-//     <div className="relative inline-block w-35 h-35 mb-4 ring-2 ring-purple-500 rounded-full overflow-hidden">
-//       <img src={src} alt={alt} className="w-full h-full object-cover" />
-//     </div>
-//   );
-
-//   const Badge = ({ variant, children }) => (
-//     <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${
-//       variant === "success" ? "bg-green-600 text-green-100" : 
-//       variant === "outline" ? "border border-purple-400 text-purple-400" : 
-//       variant === "secondary" ? "bg-gray-600 text-gray-200" : 
-//       "bg-yellow-600 text-yellow-100"
-//     }`}>
-//       {children}
-//     </span>
-//   );
-
-//   const Button = ({ children, onClick }) => (
-//     <button onClick={onClick} className="py-2 px-4 text-white bg-purple-600 rounded hover:bg-purple-500 transition-colors">
-//       {children}
-//     </button>
-//   );
-
-//   const Card = ({ title, description, children }) => (
-//     <div className="bg-gray-800 border border-purple-500 rounded-lg shadow-md p-4 mb-6">
-//       <div className="mb-2">
-//         <h3 className="text-gray-200 font-bold text-lg">{title}</h3>
-//         {description && <p className="text-gray-400 text-sm">{description}</p>}
-//       </div>
-//       {children}
-//     </div>
-//   );
-
-//   const Progress = ({ value }) => (
-//     <div className="relative w-full h-2 bg-gray-600 rounded">
-//       <div className="absolute left-0 top-0 h-2 bg-purple-500 rounded" style={{ width: `${value}%` }}></div>
-//     </div>
-//   );
-
-//   const Table = ({ children }) => (
-//     <table className="min-w-full bg-gray-700">{children}</table>
-//   );
-
-//   const TableHeader = ({ children }) => (
-//     <thead>{children}</thead>
-//   );
-
-//   const TableBody = ({ children }) => (
-//     <tbody>{children}</tbody>
-//   );
-
-//   const TableRow = ({ children }) => (
-//     <tr className="border-b border-gray-600">{children}</tr>
-//   );
-
-//   const TableHead = ({ children }) => (
-//     <th className="py-2 text-left text-gray-300">{children}</th>
-//   );
-
-//   const TableCell = ({ children }) => (
-//     <td className="py-2 text-gray-200">{children}</td>
-//   );
-
-//   if (!account) {
-//     return (
-//       <div className="flex h-screen items-center justify-center bg-gradient-to-br from-gray-900 to-gray-950 text-gray-100">
-//         <div className="text-center">
-//           <h1 className="text-3xl font-bold mb-4">Welcome to the Contributor Dashboard</h1>
-//           <p className="mb-8">Please connect your wallet to access the dashboard.</p>
-//           {/* Add your wallet connect button here */}
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="flex h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-gray-100">
-//       {/* Sidebar */}
-//       <aside className="w-64 bg-gray-800 p-6 shadow-md">
-//         <div className="flex flex-col items-center mb-6">
-//           <Avatar src="https://github.com/shadcn.png" alt="@shadcn" />
-//           <h2 className="text-xl font-bold text-gray-100">John Doe</h2>
-//           <p className="text-sm text-gray-400">Full-stack Developer</p>
-//         </div>
-//         <div className="space-y-4">
-//           <div className="flex items-center space-x-2 text-gray-300">
-//             <Github className="w-5 h-5" />
-//             <span className="text-sm">@johndoe</span>
-//           </div>
-//           <div className="flex items-center space-x-2 text-gray-300">
-//             <Wallet className="w-5 h-5" />
-//             <span className="text-sm truncate">{account.address}</span>
-//           </div>
-//         </div>
-//         <p className="mt-6 text-sm text-gray-400">
-//           Passionate about open source and building cool stuff. Always learning, always coding.
-//         </p>
-//       </aside>
-
-//       {/* Main Content */}
-//       <main className="flex-1 p-8 overflow-auto">
-//         <h1 className="text-3xl font-bold mb-8 text-gray-100">Contributor Dashboard</h1>
-        
-//         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-//           {/* Earnings Card */}
-//           <Card title="Total Earnings" description="Your total earnings from contributions">
-//             <div className="text-2xl font-bold text-gray-100">
-//               {isEarningsLoading ? 'Loading...' : `${formatEth(totalEarnings)} ETH`}
-//             </div>
-//             <Award className="h-8 w-8 text-purple-400 mt-2" />
-//           </Card>
-
-//           {/* Rank Card */}
-//           <Card title="Global Rank" description="Top 5% of contributors">
-//             <div className="text-2xl font-bold text-gray-100">#{rank}</div>
-//             <Trophy className="h-8 w-8 text-purple-400 mt-2" />
-//           </Card>
-
-//           {/* Streak Card */}
-//           <Card title="Contribution Streak" description="Days of continuous contribution">
-//             <div className="text-2xl font-bold text-gray-100">{streak} days</div>
-//             <Progress value={(streak / 30) * 100} />
-//             <Flame className="h-8 w-8 text-purple-400 mt-2" />
-//           </Card>
-//         </div>
-
-//         {/* Assigned Issues Table */}
-//         <Card title="Assigned Issues" description="Issues you're currently working on or assigned to.">
-//           {isBountiesLoading ? (
-//             <p>Loading assigned issues...</p>
-//           ) : (
-//             <Table>
-//               <TableHeader>
-//                 <TableRow>
-//                   <TableHead>Issue</TableHead>
-//                   <TableHead>Amount</TableHead>
-//                   <TableHead>Status</TableHead>
-//                   <TableHead>Actions</TableHead>
-//                 </TableRow>
-//               </TableHeader>
-//               <TableBody>
-//                 {assignedIssues.map((issue) => (
-//                   <TableRow key={issue.id}>
-//                     <TableCell>
-//                       <a href={issue.issueLink} target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:underline">
-//                         {issue.issueLink}
-//                       </a>
-//                     </TableCell>
-//                     <TableCell>{formatEth(issue.amount)} ETH</TableCell>
-//                     <TableCell>
-//                       <Badge variant={issue.isCompleted ? "secondary" : issue.isOpen ? "success" : "outline"}>
-//                         {issue.isCompleted ? "Completed" : issue.isOpen ? "In Progress" : "Pending Review"}
-//                       </Badge>
-//                     </TableCell>
-//                     <TableCell>
-//                       <Button onClick={() => window.open(issue.issueLink, '_blank')}>View</Button>
-//                     </TableCell>
-//                   </TableRow>
-//                 ))}
-//               </TableBody>
-//             </Table>
-//           )}
-//         </Card>
-//       </main>
-//     </div>
-//   );
-// };
-
-// export default ContributorDashboard;
-
-
-import { useState, useEffect } from 'react';
-import { Github, Wallet, Award, Flame, Trophy } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Github, Wallet, Award, ExternalLink, ArrowRight } from "lucide-react";
 import { useActiveAccount, useReadContract } from "thirdweb/react";
 import { getContract, defineChain } from "thirdweb";
-import { contractABI } from '../constants/contract';
-import { client } from '../client';
+import { contractABI } from "../constants/contract";
+import { client } from "../client";
+import { ConnectButton, lightTheme } from "thirdweb/react";
+import Link from "next/link";
 
 const contract = getContract({
   client,
@@ -405,214 +16,226 @@ const contract = getContract({
   abi: contractABI,
 });
 
-// Helper function to format BigInt to ETH string
 const formatEth = (wei) => {
-  if (!wei) return '0.00';
-  const ethValue = Number(wei) / (10 ** 18);
-  return ethValue;
+  if (!wei) return "0.0000";
+  return (Number(wei) / 1e18).toFixed(4);
 };
+
+function StatusBadge({ isOpen, isCompleted }) {
+  if (isCompleted)
+    return (
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+        Completed
+      </span>
+    );
+  if (isOpen)
+    return (
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
+        Open
+      </span>
+    );
+  return (
+    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+      In Progress
+    </span>
+  );
+}
 
 const ContributorDashboard = () => {
   const account = useActiveAccount();
-  const [rank, setRank] = useState(42);
-  const [streak, setStreak] = useState(7);
   const [assignedIssues, setAssignedIssues] = useState([]);
   const [userData, setUserData] = useState(null);
 
   const { data: totalEarnings, isLoading: isEarningsLoading } = useReadContract({
     contract,
-    method: "function getContributorEarnedfunds(address _address) view returns (uint256)",
-    params: [account?.address]
+    method:
+      "function getContributorEarnedfunds(address _address) view returns (uint256)",
+    params: [account?.address],
   });
 
   const { data: bounties, isLoading: isBountiesLoading } = useReadContract({
     contract,
-    method: "function getBounties() view returns ((uint256 id, string issueLink, uint256 amount, address creator, address rewardedTo, address[] assignedTo, bool isOpen, bool isCompleted, string rewardee_username)[])",
-    params: []
+    method:
+      "function getBounties() view returns ((uint256 id, string issueLink, uint256 amount, address creator, address rewardedTo, address[] assignedTo, bool isOpen, bool isCompleted, string rewardee_username)[])",
+    params: [],
   });
 
   useEffect(() => {
     if (bounties && account) {
-      const filteredIssues = bounties.filter(bounty => 
-        bounty.rewardedTo === account.address || bounty.assignedTo.includes(account.address)
+      const filtered = bounties.filter(
+        (bounty) =>
+          bounty.rewardedTo === account.address ||
+          bounty.assignedTo.includes(account.address)
       );
-      setAssignedIssues(filteredIssues);
+      setAssignedIssues(filtered);
 
-      // Fetch GitHub user data
-      if (filteredIssues.length > 0) {
-        const rewardee_username = filteredIssues[0].rewardee_username;
-        fetch(`https://api.github.com/users/${rewardee_username}`)
-          .then(response => response.json())
-          .then(data => setUserData(data))
-          .catch(error => console.error('Error fetching GitHub data:', error));
+      if (filtered.length > 0) {
+        const username = filtered[0].rewardee_username;
+        if (username) {
+          fetch(`https://api.github.com/users/${username}`)
+            .then((res) => res.json())
+            .then((data) => setUserData(data))
+            .catch(() => {});
+        }
       }
     }
   }, [bounties, account]);
 
-  const Avatar = ({ src, alt }) => (
-    <div className="relative inline-block w-35 h-35 mb-4 ring-2 ring-purple-500 rounded-full overflow-hidden">
-      <img src={src} alt={alt} className="w-full h-full object-cover" />
-    </div>
-  );
-
-  const Badge = ({ variant, children }) => (
-    <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${
-      variant === "success" ? "bg-green-600 text-green-100" : 
-      variant === "outline" ? "border border-purple-400 text-purple-400" : 
-      variant === "secondary" ? "bg-gray-600 text-gray-200" : 
-      "bg-yellow-600 text-yellow-100"
-    }`}>
-      {children}
-    </span>
-  );
-
-  const Button = ({ children, onClick }) => (
-    <button onClick={onClick} className="py-2 px-4 text-white bg-purple-600 rounded hover:bg-purple-500 transition-colors">
-      {children}
-    </button>
-  );
-
-  const Card = ({ title, description, children }) => (
-    <div className="bg-gray-800 border border-purple-500 rounded-lg shadow-md p-4 mb-6">
-      <div className="mb-2">
-        <h3 className="text-gray-200 font-bold text-lg">{title}</h3>
-        {description && <p className="text-gray-400 text-sm">{description}</p>}
-      </div>
-      {children}
-    </div>
-  );
-
-  const Progress = ({ value }) => (
-    <div className="relative w-full h-2 bg-gray-600 rounded">
-      <div className="absolute left-0 top-0 h-2 bg-purple-500 rounded" style={{ width: `${value}%` }}></div>
-    </div>
-  );
-
-  const Table = ({ children }) => (
-    <table className="min-w-full bg-gray-700">{children}</table>
-  );
-
-  const TableHeader = ({ children }) => (
-    <thead>{children}</thead>
-  );
-
-  const TableBody = ({ children }) => (
-    <tbody>{children}</tbody>
-  );
-
-  const TableRow = ({ children }) => (
-    <tr className="border-b border-gray-600">{children}</tr>
-  );
-
-  const TableHead = ({ children }) => (
-    <th className="py-2 text-left text-gray-300">{children}</th>
-  );
-
-  const TableCell = ({ children }) => (
-    <td className="py-2 text-gray-200">{children}</td>
-  );
-
   if (!account) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-gray-900 to-gray-950 text-gray-100">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold mb-4">Welcome to the Contributor Dashboard</h1>
-          <p className="mb-8">Please connect your wallet to access the dashboard.</p>
-          {/* Add your wallet connect button here */}
+      <div
+        className="min-h-screen bg-[#0d0d1a] flex items-center justify-center"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0)",
+          backgroundSize: "32px 32px",
+        }}
+      >
+        <div className="bg-[#111827]/80 border border-white/10 rounded-2xl p-10 text-center max-w-md w-full mx-4 backdrop-blur-sm">
+          <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center mx-auto mb-4">
+            <Award size={22} className="text-blue-400" />
+          </div>
+          <h2 className="text-xl font-bold text-white mb-2">Contributor Dashboard</h2>
+          <p className="text-gray-500 text-sm mb-6">
+            Connect your wallet to view your earnings and assigned bounties.
+          </p>
+          <ConnectButton client={client} theme={lightTheme()} />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-gray-100">
-      {/* Sidebar */}
-      <aside className="w-64 bg-gray-800 p-6 shadow-md">
-        <div className="flex flex-col items-center mb-6">
-          <Avatar src={userData?.avatar_url || "https://github.com/shadcn.png"} alt={userData?.login || "@shadcn"} />
-          <h2 className="text-xl font-bold text-gray-100">{userData?.name || "Loading..."}</h2>
-          <p className="text-sm text-gray-400">{userData?.bio || "GitHub Contributor"}</p>
-        </div>
-        <div className="space-y-4">
-          <div className="flex items-center space-x-2 text-gray-300">
-            <Github className="w-5 h-5" />
-            <span className="text-sm">@{userData?.login || "Loading..."}</span>
-          </div>
-          <div className="flex items-center space-x-2 text-gray-300">
-            <Wallet className="w-5 h-5" />
-            <span className="text-sm truncate">{account.address}</span>
-          </div>
-        </div>
-        <p className="mt-6 text-sm text-gray-400">
-          {userData?.bio || "Passionate about open source and building cool stuff. Always learning, always coding."}
-        </p>
-      </aside>
+    <div
+      className="min-h-screen bg-[#0d0d1a] text-white"
+      style={{
+        backgroundImage:
+          "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0)",
+        backgroundSize: "32px 32px",
+      }}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar */}
+          <aside className="w-full lg:w-72 shrink-0">
+            <div className="bg-[#111827]/80 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
+              {/* Avatar */}
+              <div className="flex flex-col items-center mb-6">
+                {userData?.avatar_url ? (
+                  <img
+                    src={userData.avatar_url}
+                    alt={userData.login}
+                    className="w-20 h-20 rounded-full ring-2 ring-purple-500/30 mb-4"
+                  />
+                ) : (
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center text-2xl font-bold mb-4">
+                    {account.address.slice(2, 4).toUpperCase()}
+                  </div>
+                )}
+                <h2 className="text-base font-semibold text-white">
+                  {userData?.name || userData?.login || "Anonymous"}
+                </h2>
+                {userData?.bio && (
+                  <p className="text-xs text-gray-500 text-center mt-1 leading-relaxed">
+                    {userData.bio}
+                  </p>
+                )}
+              </div>
 
-      {/* Main Content */}
-      <main className="flex-1 p-8 overflow-auto">
-        <h1 className="text-3xl font-bold mb-8 text-gray-100">Contributor Dashboard</h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {/* Earnings Card */}
-          <Card title="Total Earnings" description="Your total earnings from contributions">
-            <div className="text-2xl font-bold text-gray-100">
-              {isEarningsLoading ? 'Loading...' : `${formatEth(totalEarnings)} ETH`}
+              <div className="space-y-3">
+                {userData?.login && (
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <Github size={14} />
+                    <a
+                      href={`https://github.com/${userData.login}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-gray-300 transition-colors"
+                    >
+                      @{userData.login}
+                    </a>
+                  </div>
+                )}
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <Wallet size={14} />
+                  <span className="font-mono text-xs truncate">{account.address}</span>
+                </div>
+              </div>
             </div>
-            <Award className="h-8 w-8 text-purple-400 mt-2" />
-          </Card>
+          </aside>
 
-          {/* Rank Card */}
-          <Card title="Global Rank" description="Top 5% of contributors">
-            <div className="text-2xl font-bold text-gray-100">#{rank}</div>
-            <Trophy className="h-8 w-8 text-purple-400 mt-2" />
-          </Card>
+          {/* Main */}
+          <main className="flex-1 min-w-0">
+            {/* Stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+              <div className="bg-[#111827]/80 border border-white/10 rounded-2xl p-5 backdrop-blur-sm">
+                <p className="text-xs text-gray-600 mb-2">Total Earned</p>
+                <p className="text-2xl font-bold text-purple-400">
+                  {isEarningsLoading ? "—" : `${formatEth(totalEarnings)} ETH`}
+                </p>
+              </div>
+              <div className="bg-[#111827]/80 border border-white/10 rounded-2xl p-5 backdrop-blur-sm">
+                <p className="text-xs text-gray-600 mb-2">Assigned Bounties</p>
+                <p className="text-2xl font-bold text-blue-400">
+                  {isBountiesLoading ? "—" : assignedIssues.length}
+                </p>
+              </div>
+            </div>
 
-          {/* Streak Card */}
-          <Card title="Contribution Streak" description="Days of continuous contribution">
-            <div className="text-2xl font-bold text-gray-100">{streak} days</div>
-            <Progress value={(streak / 30) * 100} />
-            <Flame className="h-8 w-8 text-purple-400 mt-2" />
-          </Card>
+            {/* Bounties */}
+            <div className="bg-[#111827]/80 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
+              <h2 className="text-base font-semibold text-white mb-6">My Bounties</h2>
+
+              {isBountiesLoading ? (
+                <div className="space-y-3">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="h-20 bg-white/5 rounded-xl animate-pulse" />
+                  ))}
+                </div>
+              ) : assignedIssues.length === 0 ? (
+                <div className="text-center py-14">
+                  <p className="text-gray-600 text-sm mb-4">No bounties assigned yet</p>
+                  <Link
+                    href="/bounties"
+                    className="inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                  >
+                    Browse open bounties <ArrowRight size={14} />
+                  </Link>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                  {assignedIssues.map((issue) => (
+                    <div
+                      key={issue.id}
+                      className="group bg-[#0d0d1a]/60 border border-white/5 hover:border-purple-500/20 rounded-xl p-4 transition-colors"
+                    >
+                      <div className="flex justify-between items-start gap-3 mb-3">
+                        <p className="text-sm text-gray-400 line-clamp-2 leading-snug">
+                          {issue.issueLink.replace("https://github.com/", "")}
+                        </p>
+                        <StatusBadge isOpen={issue.isOpen} isCompleted={issue.isCompleted} />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="px-3 py-1 bg-purple-500/10 border border-purple-500/20 rounded-full text-xs font-semibold text-purple-300">
+                          {formatEth(issue.amount)} ETH
+                        </span>
+                        <a
+                          href={issue.issueLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-gray-400 transition-colors"
+                        >
+                          View <ExternalLink size={11} />
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </main>
         </div>
-
-        {/* Assigned Issues Table */}
-        <Card title="Assigned Issues" description="Issues you're currently working on or assigned to.">
-          {isBountiesLoading ? (
-            <p>Loading assigned issues...</p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Issue</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {assignedIssues.map((issue) => (
-                  <TableRow key={issue.id}>
-                    <TableCell>
-                      <a href={issue.issueLink} target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:underline">
-                        {issue.issueLink}
-                      </a>
-                    </TableCell>
-                    <TableCell>{formatEth(issue.amount)} ETH</TableCell>
-                    <TableCell>
-                      <Badge variant={issue.isCompleted ? "secondary" : issue.isOpen ? "success" : "outline"}>
-                        {issue.isCompleted ? "Completed" : issue.isOpen ? "In Progress" : "Pending Review"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Button onClick={() => window.open(issue.issueLink, '_blank')}>View</Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </Card>
-      </main>
+      </div>
     </div>
   );
 };
