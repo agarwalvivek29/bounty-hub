@@ -1,16 +1,12 @@
-/* eslint-disable */
+"use client";
 
-"use client"
-
-
-import React, { useState, useEffect } from 'react';
-import { BarChart, Calendar, Github, Search, Wallet } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Github, Wallet, Search, ExternalLink } from "lucide-react";
 import { useActiveAccount, useReadContract, useSendTransaction } from "thirdweb/react";
-import { contractABI } from '../constants/contract';
+import { contractABI } from "../constants/contract";
 import { defineChain, getContract, prepareContractCall } from "thirdweb";
-import { ethers } from 'ethers';
-import { client } from '../client';
-import Manager from "../../../Manager.jpg"
+import { client } from "../client";
+import { ConnectButton, lightTheme } from "thirdweb/react";
 
 const contract = getContract({
   client,
@@ -19,608 +15,349 @@ const contract = getContract({
   abi: contractABI,
 });
 
-const Avatar = ({ src, alt }) => (
-  <div className="relative inline-block w-35 h-35 mb-4 ring-2 ring-purple-500 rounded-full overflow-hidden">
-    <img src={src} alt={alt} className="w-full h-full object-cover" />
-  </div>
-);
+const STATUS_TABS = ["All", "Open", "Completed"];
 
-function Select({ options, value, onChange }) {
+function StatusBadge({ isOpen, isCompleted }) {
+  if (isCompleted)
+    return (
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+        Completed
+      </span>
+    );
+  if (isOpen)
+    return (
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
+        Open
+      </span>
+    );
   return (
-    <select className="bg-gray-700 text-gray-200 border-gray-600" value={value} onChange={e => onChange(e.target.value)}>
-      {options.map(option => (
-        <option key={option.value} value={option.value}>{option.label}</option>
-      ))}
-    </select>
-  )
-}
-
-function Card({ children, className }) {
-  return (
-    <div className={`p-4 rounded-lg shadow-lg bg-gray-800 border-purple-500 ${className}`}>
-      {children}
-    </div>
-  )
+    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+      In Progress
+    </span>
+  );
 }
 
 const ManagerDashboard = () => {
   const account = useActiveAccount();
-  const [filterBounty, setFilterBounty] = useState("all");
-  const [filterStatus, setFilterStatus] = useState("all");
+  const [activeTab, setActiveTab] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [depositAmount, setDepositAmount] = useState("");
+  const [depositStatus, setDepositStatus] = useState(null); // null | 'pending' | 'success' | 'error'
   const { mutate: sendTransaction } = useSendTransaction();
 
   const { data: bountiesData, isPending: isBountiesPending } = useReadContract({
-    contract, 
-    method: "function getBountiesByMaintainer(address _maintainer) view returns ((uint256 id, string issueLink, uint256 amount, address creator, address rewardedTo, address[] assignedTo, bool isOpen, bool isCompleted, string rewardee_username)[])",
-    params: [account?.address]
+    contract,
+    method:
+      "function getBountiesByMaintainer(address _maintainer) view returns ((uint256 id, string issueLink, uint256 amount, address creator, address rewardedTo, address[] assignedTo, bool isOpen, bool isCompleted, string rewardee_username)[])",
+    params: [account?.address],
   });
 
   const { data: fundsData, isPending: isFundsPending } = useReadContract({
-    contract, 
-    method: "function maintainers(address) view returns (uint256 totalFunds, uint256 blockedFounds, uint256 availableFunds)",
-    params: [account?.address]
-  });
-
-  const { data: bountyCountData, isPending: isBountyCountPending } = useReadContract({
-    contract, 
-    method: "function maintainerBounties(address, uint256) view returns (uint256)",
-    params: [account?.address, 0]
+    contract,
+    method:
+      "function maintainers(address) view returns (uint256 totalFunds, uint256 blockedFounds, uint256 availableFunds)",
+    params: [account?.address],
   });
 
   const [bounties, setBounties] = useState([]);
   const [funds, setFunds] = useState({ totalFunds: 0, blockedFunds: 0, availableFunds: 0 });
-  const [bountyCount, setBountyCount] = useState(0);
 
   useEffect(() => {
-    console.log('Account:', account);
-    
-    if (bountiesData && !isBountiesPending) {
-      console.log('Bounties Data:', bountiesData);
-      setBounties(bountiesData);
-    }
+    if (bountiesData && !isBountiesPending) setBounties(bountiesData);
+  }, [bountiesData, isBountiesPending]);
+
+  useEffect(() => {
     if (fundsData && !isFundsPending) {
-      console.log('Funds Data:', fundsData);
       setFunds({
-        totalFunds: Number(fundsData[0].toString())/(10 ** 18),  
-        blockedFunds: Number(fundsData[1].toString())/(10 ** 18), 
-        availableFunds: Number(fundsData[2].toString())/(10 ** 18) 
+        totalFunds: Number(fundsData[0].toString()) / 1e18,
+        blockedFunds: Number(fundsData[1].toString()) / 1e18,
+        availableFunds: Number(fundsData[2].toString()) / 1e18,
       });
-      console.log("totalFunds", funds.totalFunds);
     }
-    if (bountyCountData && !isBountyCountPending) {
-      console.log('Bounty Count Data:', bountyCountData);
-      setBountyCount(bountyCountData);
-    }
+  }, [fundsData, isFundsPending]);
 
-    console.log('Is Bounties Pending:', isBountiesPending);
-    console.log('Is Funds Pending:', isFundsPending);
-    console.log('Is Bounty Count Pending:', isBountyCountPending);
-
-  }, [account, bountiesData, fundsData, bountyCountData, isBountiesPending, isFundsPending, isBountyCountPending]);
-
-  useEffect(() => {
-    console.log('Updated Bounties:', bounties);
-    console.log('Updated Funds:', funds);
-    console.log('Updated Bounty Count:', bountyCount);
-  }, [bounties, funds, bountyCount]);
-
-  const filteredBounties = bounties.filter(bounty => 
-    (filterBounty === "all" || (filterBounty === "bounty" && bounty.isOpen) || (filterBounty === "non-bounty" && !bounty.isOpen)) &&
-    (filterStatus === "all" || (filterStatus === "open" && bounty.isOpen) || (filterStatus === "closed" && !bounty.isOpen)) &&
-    (bounty.issueLink.toLowerCase().includes(searchTerm.toLowerCase()) || bounty.rewardee_username.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
-
-  console.log('Filtered Bounties:', filteredBounties);
+  const filteredBounties = bounties.filter((bounty) => {
+    const tabMatch =
+      activeTab === "All" ||
+      (activeTab === "Open" && bounty.isOpen) ||
+      (activeTab === "Completed" && bounty.isCompleted);
+    const searchMatch =
+      bounty.issueLink.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (bounty.rewardee_username || "").toLowerCase().includes(searchTerm.toLowerCase());
+    return tabMatch && searchMatch;
+  });
 
   const handleDepositFunds = async () => {
     if (!depositAmount || isNaN(depositAmount) || parseFloat(depositAmount) <= 0) {
-      alert("Please enter a valid deposit amount.");
+      setDepositStatus("error");
       return;
     }
-  
     try {
+      setDepositStatus("pending");
       const valueInWei = parseFloat(depositAmount) * 1e18;
-      
       const transaction = prepareContractCall({
         contract,
         method: "function depositFunds() payable",
         params: [],
-        value: valueInWei
+        value: valueInWei,
       });
-      
-      const tx = await sendTransaction(transaction);
-      alert("Deposit transaction sent successfully, wait for wallet to pop up!");
-      setDepositAmount("");
-      
-      await tx.wait();
-      alert("Deposit confirmed!");
-      
-    } catch (error) {
-      console.error("Deposit failed:", error);
+      sendTransaction(transaction, {
+        onSuccess: () => {
+          setDepositStatus("success");
+          setDepositAmount("");
+        },
+        onError: () => setDepositStatus("error"),
+      });
+    } catch {
+      setDepositStatus("error");
     }
-  }
+  };
 
   const handleAddToGitHub = () => {
-    window.open('https://github.com/apps/tst-app-vivk/installations/new', '_blank');
+    window.open("https://github.com/apps/tst-app-vivk/installations/new", "_blank");
   };
 
   if (!account) {
-    console.log('No account connected');
     return (
-      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold mb-4">Welcome to the Maintainer's Dashboard</h1>
-          <p className="mb-8">Please connect your wallet to access the dashboard.</p>
-          {/* Add your wallet connect button here */}
+      <div
+        className="min-h-screen bg-[#0d0d1a] flex items-center justify-center"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0)",
+          backgroundSize: "32px 32px",
+        }}
+      >
+        <div className="bg-[#111827]/80 border border-white/10 rounded-2xl p-10 text-center max-w-md w-full mx-4 backdrop-blur-sm">
+          <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center mx-auto mb-4">
+            <Wallet size={22} className="text-purple-400" />
+          </div>
+          <h2 className="text-xl font-bold text-white mb-2">Maintainer Dashboard</h2>
+          <p className="text-gray-500 text-sm mb-6">
+            Connect your wallet to manage bounties and track your repos.
+          </p>
+          <ConnectButton client={client} theme={lightTheme()} />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100">
-      {/* Sidebar */}
-      <div className="w-64 bg-gray-800 p-6 shadow-lg">
-        <div className="flex flex-col items-center mb-6">
-          <Avatar src="https://api.dicebear.com/6.x/bottts/svg?seed=Octocat" alt="@shadcn" />
-          <h2 className="text-xl font-bold text-gray-100">Maintainer</h2>
-          <p className="text-sm text-gray-400">Open Source Visionary</p>
-        </div>
-        <div className="mb-6 space-y-2">
-          <div className="flex items-center">
-            <Github className="w-4 h-4 mr-2 text-purple-400" />
-            <span className="text-sm text-gray-300">Maman08</span>
-          </div>
-          <div className="flex items-center">
-            <Wallet className="w-4 h-4 mr-2 text-purple-400" />
-            <span className="text-sm text-gray-300 truncate">{account.address}</span>
-          </div>
-          <div className="flex items-center">
-            <Calendar className="w-4 h-4 mr-2 text-purple-400" />
-            <span className="text-sm text-gray-300">Joined: N/A</span>
-          </div>
-        </div>
-        <div className="border-t border-gray-700 pt-6">
-          <h3 className="font-semibold mb-2 text-gray-200">About</h3>
-          <p className="text-sm text-gray-400 leading-relaxed">
-            Passionate about creating inclusive and innovative open source solutions.
-          </p>
-        </div>
-        {/* Add to GitHub button */}
-        <div className="mt-6">
-          <button
-            onClick={handleAddToGitHub}
-            className="w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded flex items-center justify-center"
-          >
-            <Github className="w-4 h-4 mr-2" />
-            Add to GitHub
-          </button>
-        </div>
-      </div>
+    <div
+      className="min-h-screen bg-[#0d0d1a] text-white"
+      style={{
+        backgroundImage:
+          "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0)",
+        backgroundSize: "32px 32px",
+      }}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar */}
+          <aside className="w-full lg:w-72 shrink-0">
+            <div className="bg-[#111827]/80 border border-white/10 rounded-2xl p-6 backdrop-blur-sm mb-4">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm">
+                  {account.address.slice(2, 4).toUpperCase()}
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-0.5">Connected Wallet</p>
+                  <p className="text-sm font-mono text-gray-300">
+                    {account.address.slice(0, 6)}…{account.address.slice(-4)}
+                  </p>
+                </div>
+              </div>
 
-      {/* Main content */}
-      <div className="flex-1 p-8 overflow-auto">
-        <h1 className="text-3xl font-bold mb-8 text-gray-100">Maintainer's Dashboard</h1>
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <Wallet size={14} />
+                  <span className="font-mono text-xs truncate">{account.address}</span>
+                </div>
+              </div>
 
-        {/* Stats cards */}
-        <div className="grid grid-cols-3 gap-6 mb-8">
-          <Card>
-            <div className="flex justify-between pb-2">
-              <span className="text-sm text-gray-300">Available Funds</span>
-              <Wallet className="w-4 h-4 text-purple-400" />
+              <button
+                onClick={handleAddToGitHub}
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium rounded-xl transition-colors"
+              >
+                <Github size={16} />
+                Add to GitHub
+              </button>
             </div>
-            <div className="text-2xl text-gray-100">ETH{funds.availableFunds.toString()}</div>
-            <p className="text-xs text-gray-400 mt-1">Last updated: Now</p>
-          </Card>
-          <Card>
-            <div className="flex justify-between pb-2">
-              <span className="text-sm text-gray-300">Total Funds</span>
-              <BarChart className="w-4 h-4 text-purple-400" />
-            </div>
-            <div className="text-2xl text-gray-100">ETH{funds.totalFunds.toString()}</div>
-            <p className="text-xs text-gray-400 mt-1">Blocked: ETH{funds.blockedFunds.toString()}</p>
-          </Card>
-          <Card>
-            <div className="flex justify-between pb-2">
-              <span className="text-sm text-gray-300">Open Bounties</span>
-              <Github className="w-4 h-4 text-purple-400" />
-            </div>
-            <div className="text-2xl text-gray-100">{bounties.filter(bounty => bounty.isOpen).length}</div>
-          </Card>
-          <Card>
-            <div className="flex justify-between pb-2">
-              <span className="text-sm text-gray-300">Deposit Funds</span>
-              <Wallet className="w-4 h-4 text-purple-400" />
-            </div>
-            <input
-              type="number"
-              placeholder="Amount in ETH"
-              value={depositAmount}
-              onChange={(e) => setDepositAmount(e.target.value)}
-              className="w-full p-2 mb-2 bg-gray-700 text-gray-200 border border-gray-600 rounded"
-            />
-            <button 
-              onClick={handleDepositFunds}
-              className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded w-full"
-            >
-              Deposit Funds
-            </button>
-          </Card>
-        </div>
 
-        {/* Bounties table */}
-        <Card>
-          <div>
-            <span className="text-gray-100">Project Bounties</span>
-            <span className="text-gray-400">Manage and track your bounties</span>
-          </div>
-          <div className="mb-4">
-            <div className="mb-4">
-              <label htmlFor="filter-bounty" className="text-gray-300">Bounty Status</label>
-              <Select 
-                options={[{ value: "all", label: "All" }, { value: "bounty", label: "Open" }, { value: "non-bounty", label: "Closed" }]} 
-                value={filterBounty} 
-                onChange={setFilterBounty} 
-              />
+            {/* Deposit Card */}
+            <div className="bg-[#111827]/80 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
+              <h3 className="text-sm font-semibold text-white mb-1">Deposit Funds</h3>
+              <p className="text-xs text-gray-600 mb-4">Add ETH to your bounty pool</p>
+              <div className="relative mb-3">
+                <input
+                  type="number"
+                  placeholder="0.00"
+                  value={depositAmount}
+                  onChange={(e) => {
+                    setDepositAmount(e.target.value);
+                    setDepositStatus(null);
+                  }}
+                  className="w-full px-4 py-2.5 pr-14 bg-[#0d0d1a] border border-white/10 focus:border-purple-500/50 rounded-xl text-sm text-gray-200 placeholder-gray-700 focus:outline-none transition-colors"
+                />
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-600 font-mono">
+                  ETH
+                </span>
+              </div>
+              <button
+                onClick={handleDepositFunds}
+                disabled={depositStatus === "pending"}
+                className="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-medium text-gray-300 hover:text-white rounded-xl transition-colors disabled:opacity-50"
+              >
+                {depositStatus === "pending" ? "Confirming…" : "Deposit"}
+              </button>
+              {depositStatus === "success" && (
+                <p className="text-xs text-emerald-400 mt-2 text-center">
+                  Deposit submitted successfully!
+                </p>
+              )}
+              {depositStatus === "error" && (
+                <p className="text-xs text-red-400 mt-2 text-center">
+                  Something went wrong. Check your input.
+                </p>
+              )}
             </div>
-            <div>
-              <label htmlFor="filter-status" className="text-gray-300">Completion Status</label>
-              <Select 
-                options={[{ value: "all", label: "All" }, { value: "open", label: "Incomplete" }, { value: "closed", label: "Completed" }]} 
-                value={filterStatus} 
-                onChange={setFilterStatus} 
-              />
-            </div>
-            <div className="relative">
-              <input 
-                type="text" 
-                placeholder="Search bounties..." 
-                className="bg-gray-700 text-gray-200 border-gray-600 w-full p-2 rounded-lg" 
-                value={searchTerm} 
-                onChange={e => setSearchTerm(e.target.value)} 
-              />
-              <Search className="absolute right-3 top-3 text-gray-400" />
-            </div>
-          </div>
-          <table className="table-auto w-full text-left text-gray-300">
-            <thead>
-              <tr>
-                <th>Issue Link</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Rewarded To</th>
-                <th>Completed</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredBounties.map(bounty => (
-                <tr key={bounty.id}>
-                  <td>{bounty.issueLink}</td>
-                  <td>ETH{Number(bounty.amount.toString())/(10 ** 18)}</td>
-                  <td>{bounty.isOpen ? 'Open' : 'Closed'}</td>
-                  <td>{bounty.rewardee_username || 'Not Assigned'}</td>
-                  <td>{bounty.isCompleted ? 'Yes' : 'No'}</td>
-                </tr>
+          </aside>
+
+          {/* Main */}
+          <main className="flex-1 min-w-0">
+            {/* Stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+              {[
+                {
+                  label: "Available",
+                  value: isFundsPending ? "—" : `${funds.availableFunds.toFixed(4)} ETH`,
+                  color: "text-emerald-400",
+                },
+                {
+                  label: "Total Deposited",
+                  value: isFundsPending ? "—" : `${funds.totalFunds.toFixed(4)} ETH`,
+                  color: "text-white",
+                },
+                {
+                  label: "Locked in Bounties",
+                  value: isFundsPending ? "—" : `${funds.blockedFunds.toFixed(4)} ETH`,
+                  color: "text-yellow-400",
+                },
+              ].map((s) => (
+                <div
+                  key={s.label}
+                  className="bg-[#111827]/80 border border-white/10 rounded-2xl p-5 backdrop-blur-sm"
+                >
+                  <p className="text-xs text-gray-600 mb-2">{s.label}</p>
+                  <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
+                </div>
               ))}
-            </tbody>
-          </table>
-        </Card>
+            </div>
+
+            {/* Bounties */}
+            <div className="bg-[#111827]/80 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <h2 className="text-base font-semibold text-white">Your Bounties</h2>
+                <div className="relative">
+                  <Search
+                    size={14}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Search…"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-9 pr-4 py-2 bg-[#0d0d1a] border border-white/10 rounded-lg text-sm text-gray-300 placeholder-gray-700 focus:outline-none focus:border-purple-500/40 transition-colors w-full sm:w-56"
+                  />
+                </div>
+              </div>
+
+              {/* Tabs */}
+              <div className="flex gap-2 mb-5">
+                {STATUS_TABS.map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                      activeTab === tab
+                        ? "bg-purple-500/20 text-purple-300 border border-purple-500/30"
+                        : "text-gray-600 hover:text-gray-400 hover:bg-white/5"
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+
+              {/* Table */}
+              {isBountiesPending ? (
+                <div className="space-y-3">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="h-12 bg-white/5 rounded-xl animate-pulse" />
+                  ))}
+                </div>
+              ) : filteredBounties.length === 0 ? (
+                <div className="text-center py-12 text-gray-700">
+                  <p>No bounties found</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-white/5">
+                        <th className="text-left text-xs text-gray-600 font-medium pb-3 pr-4">
+                          Issue
+                        </th>
+                        <th className="text-left text-xs text-gray-600 font-medium pb-3 pr-4">
+                          Amount
+                        </th>
+                        <th className="text-left text-xs text-gray-600 font-medium pb-3 pr-4">
+                          Status
+                        </th>
+                        <th className="text-left text-xs text-gray-600 font-medium pb-3">
+                          Rewarded To
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {filteredBounties.map((bounty) => (
+                        <tr key={bounty.id} className="group">
+                          <td className="py-3 pr-4">
+                            <a
+                              href={bounty.issueLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1.5 text-gray-400 hover:text-purple-400 transition-colors max-w-xs truncate"
+                            >
+                              <span className="truncate">
+                                {bounty.issueLink.replace("https://github.com/", "")}
+                              </span>
+                              <ExternalLink size={11} className="shrink-0 opacity-0 group-hover:opacity-100" />
+                            </a>
+                          </td>
+                          <td className="py-3 pr-4">
+                            <span className="font-mono text-gray-300 text-xs">
+                              {(Number(bounty.amount.toString()) / 1e18).toFixed(4)} ETH
+                            </span>
+                          </td>
+                          <td className="py-3 pr-4">
+                            <StatusBadge isOpen={bounty.isOpen} isCompleted={bounty.isCompleted} />
+                          </td>
+                          <td className="py-3 text-gray-600 text-xs">
+                            {bounty.rewardee_username || "—"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   );
 };
 
 export default ManagerDashboard;
-
-
-
-
-
-// import React, { useState, useEffect } from 'react';
-// import { BarChart, Calendar, Github, Search, Wallet } from 'lucide-react';
-// import { useActiveAccount, useReadContract, useSendTransaction } from "thirdweb/react";
-// import { contractABI } from '../constants/contract';
-// import { defineChain, getContract, prepareContractCall } from "thirdweb";
-// import { ethers } from 'ethers';
-// import { client } from '../client';
-// import Manager from "../../../Manager.jpg"
-// const contract = getContract({
-//   client,
-//   chain: defineChain(84532),
-//   address: "0x96111652DB352b814697e79A846E8CD9C8e11196",
-//   abi: contractABI,
-// });
-
-// const Avatar = ({ src, alt }) => (
-//   <div className="relative inline-block w-35 h-35 mb-4 ring-2 ring-purple-500 rounded-full overflow-hidden">
-//     <img src={src} alt={alt} className="w-full h-full object-cover" />
-//   </div>
-// );
-
-// function Select({ options, value, onChange }) {
-//   return (
-//     <select className="bg-gray-700 text-gray-200 border-gray-600" value={value} onChange={e => onChange(e.target.value)}>
-//       {options.map(option => (
-//         <option key={option.value} value={option.value}>{option.label}</option>
-//       ))}
-//     </select>
-//   )
-// }
-
-// function Card({ children, className }) {
-//   return (
-//     <div className={`p-4 rounded-lg shadow-lg bg-gray-800 border-purple-500 ${className}`}>
-//       {children}
-//     </div>
-//   )
-// }
-
-// const ManagerDashboard = () => {
-//   const account = useActiveAccount();
-//   const [filterBounty, setFilterBounty] = useState("all");
-//   const [filterStatus, setFilterStatus] = useState("all");
-//   const [searchTerm, setSearchTerm] = useState("");
-//   const [depositAmount, setDepositAmount] = useState("");
-//   const { mutate: sendTransaction } = useSendTransaction();
-
-//   // Fetch bounties by maintainer
-//   const { data: bountiesData, isPending: isBountiesPending } = useReadContract({
-//     contract, 
-//     method: "function getBountiesByMaintainer(address _maintainer) view returns ((uint256 id, string issueLink, uint256 amount, address creator, address rewardedTo, address[] assignedTo, bool isOpen, bool isCompleted, string rewardee_username)[])",
-//     params: [account?.address]
-//   });
-
-//   // Fetch maintainer funds
-//   const { data: fundsData, isPending: isFundsPending } = useReadContract({
-//     contract, 
-//     method: "function maintainers(address) view returns (uint256 totalFunds, uint256 blockedFounds, uint256 availableFunds)",
-//     params: [account?.address]
-//   });
-
-//   // Fetch maintainer bounties count
-//   const { data: bountyCountData, isPending: isBountyCountPending } = useReadContract({
-//     contract, 
-//     method: "function maintainerBounties(address, uint256) view returns (uint256)",
-//     params: [account?.address, 0] // Assuming 0 is a valid index, adjust if needed
-//   });
-
-//   const [bounties, setBounties] = useState([]);
-//   const [funds, setFunds] = useState({ totalFunds: 0, blockedFunds: 0, availableFunds: 0 });
-//   const [bountyCount, setBountyCount] = useState(0);
-
-//   useEffect(() => {
-//     console.log('Account:', account);
-    
-//     if (bountiesData && !isBountiesPending) {
-//       console.log('Bounties Data:', bountiesData);
-//       setBounties(bountiesData);
-//     }
-//     if (fundsData && !isFundsPending) {
-//       console.log('Funds Data:', fundsData);
-//       setFunds({
-//         totalFunds: Number(fundsData[0].toString())/1000000000000,  
-//         blockedFunds: Number(fundsData[1].toString())/1000000000000, 
-//         availableFunds: Number(fundsData[2].toString())/1000000000000 
-//       });
-//       console.log("totalFunds", funds.totalFunds);
-//     }
-//     if (bountyCountData && !isBountyCountPending) {
-//       console.log('Bounty Count Data:', bountyCountData);
-//       setBountyCount(bountyCountData);
-//     }
-
-//     console.log('Is Bounties Pending:', isBountiesPending);
-//     console.log('Is Funds Pending:', isFundsPending);
-//     console.log('Is Bounty Count Pending:', isBountyCountPending);
-
-//   }, [account, bountiesData, fundsData, bountyCountData, isBountiesPending, isFundsPending, isBountyCountPending]);
-
-//   useEffect(() => {
-//     console.log('Updated Bounties:', bounties);
-//     console.log('Updated Funds:', funds);
-//     console.log('Updated Bounty Count:', bountyCount);
-//   }, [bounties, funds, bountyCount]);
-
-//   const filteredBounties = bounties.filter(bounty => 
-//     (filterBounty === "all" || (filterBounty === "bounty" && bounty.isOpen) || (filterBounty === "non-bounty" && !bounty.isOpen)) &&
-//     (filterStatus === "all" || (filterStatus === "open" && bounty.isOpen) || (filterStatus === "closed" && !bounty.isOpen)) &&
-//     (bounty.issueLink.toLowerCase().includes(searchTerm.toLowerCase()) || bounty.rewardee_username.toLowerCase().includes(searchTerm.toLowerCase()))
-//   );
-
-//   console.log('Filtered Bounties:', filteredBounties);
-
- 
-//   const handleDepositFunds = async () => {
-//     // Input validation
-//     if (!depositAmount || isNaN(depositAmount) || parseFloat(depositAmount) <= 0) {
-//       alert("Please enter a valid deposit amount.");
-//       return;
-//     }
-  
-//     try {
-//       // Convert ETH to Wei (1 ETH = 10^18 Wei)
-//       const valueInWei = parseFloat(depositAmount) * 1e18;
-      
-//       const transaction = prepareContractCall({
-//         contract,
-//         method: "function depositFunds() payable",
-//         params: [],
-//         value: valueInWei
-//       });
-      
-//       const tx = await sendTransaction(transaction);
-//       alert("Deposit transaction sent successfully,wait for wallet to pop up!");
-//       setDepositAmount("");
-      
-//       // Optionally wait for transaction confirmation
-//        await tx.wait();
-//       alert("Deposit confirmed!");
-      
-//     } catch (error) {
-//       console.error("Deposit failed:", error);
-//     }
-//   }
-  
-
-//   if (!account) {
-//     console.log('No account connected');
-//     return (
-//       <div className="flex h-screen items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100">
-//         <div className="text-center">
-//           <h1 className="text-3xl font-bold mb-4">Welcome to the Maintainer's Dashboard</h1>
-//           <p className="mb-8">Please connect your wallet to access the dashboard.</p>
-//           {/* Add your wallet connect button here */}
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="flex h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100">
-//       {/* Sidebar */}
-//       <div className="w-64 bg-gray-800 p-6 shadow-lg">
-//         <div className="flex flex-col items-center mb-6">
-//           <Avatar src="https://api.dicebear.com/6.x/bottts/svg?seed=Octocat" alt="@shadcn" />
-//           <h2 className="text-xl font-bold text-gray-100">Maintainer</h2>
-//           <p className="text-sm text-gray-400">Open Source Visionary</p>
-//         </div>
-//         <div className="mb-6 space-y-2">
-//           <div className="flex items-center">
-//             <Github className="w-4 h-4 mr-2 text-purple-400" />
-//             <span className="text-sm text-gray-300">Maman08</span>
-//           </div>
-//           <div className="flex items-center">
-//             <Wallet className="w-4 h-4 mr-2 text-purple-400" />
-//             <span className="text-sm text-gray-300 truncate">{account.address}</span>
-//           </div>
-//           <div className="flex items-center">
-//             <Calendar className="w-4 h-4 mr-2 text-purple-400" />
-//             <span className="text-sm text-gray-300">Joined: N/A</span>
-//           </div>
-//         </div>
-//         <div className="border-t border-gray-700 pt-6">
-//           <h3 className="font-semibold mb-2 text-gray-200">About</h3>
-//           <p className="text-sm text-gray-400 leading-relaxed">
-//             Passionate about creating inclusive and innovative open source solutions.
-//           </p>
-//         </div>
-//       </div>
-
-//       {/* Main content */}
-//       <div className="flex-1 p-8 overflow-auto">
-//         <h1 className="text-3xl font-bold mb-8 text-gray-100">Maintainer's Dashboard</h1>
-
-//         {/* Stats cards */}
-//         <div className="grid grid-cols-3 gap-6 mb-8">
-//           <Card>
-//             <div className="flex justify-between pb-2">
-//               <span className="text-sm text-gray-300">Available Funds</span>
-//               <Wallet className="w-4 h-4 text-purple-400" />
-//             </div>
-//             <div className="text-2xl text-gray-100">ETH{funds.availableFunds.toString()}</div>
-//             <p className="text-xs text-gray-400 mt-1">Last updated: Now</p>
-//           </Card>
-//           <Card>
-//             <div className="flex justify-between pb-2">
-//               <span className="text-sm text-gray-300">Total Funds</span>
-//               <BarChart className="w-4 h-4 text-purple-400" />
-//             </div>
-//             <div className="text-2xl text-gray-100">ETH{funds.totalFunds.toString()}</div>
-//             <p className="text-xs text-gray-400 mt-1">Blocked: ETH{funds.blockedFunds.toString()}</p>
-//           </Card>
-//           <Card>
-//             <div className="flex justify-between pb-2">
-//               <span className="text-sm text-gray-300">Open Bounties</span>
-//               <Github className="w-4 h-4 text-purple-400" />
-//             </div>
-//             <div className="text-2xl text-gray-100">{bounties.filter(bounty => bounty.isOpen).length}</div>
-//           </Card>
-//           <Card>
-//             <div className="flex justify-between pb-2">
-//               <span className="text-sm text-gray-300">Deposit Funds</span>
-//               <Wallet className="w-4 h-4 text-purple-400" />
-//             </div>
-//             <input
-//               type="number"
-//               placeholder="Amount in ETH"
-//               value={depositAmount}
-//               onChange={(e) => setDepositAmount(e.target.value)}
-//               className="w-full p-2 mb-2 bg-gray-700 text-gray-200 border border-gray-600 rounded"
-//             />
-//             <button 
-//               onClick={handleDepositFunds}
-//               className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded w-full"
-//             >
-//               Deposit Funds
-//             </button>
-//           </Card>
-//         </div>
-
-//         {/* Bounties table */}
-//         <Card>
-//           <div>
-//             <span className="text-gray-100">Project Bounties</span>
-//             <span className="text-gray-400">Manage and track your bounties</span>
-//           </div>
-//           <div className="mb-4">
-//             <div className="mb-4">
-//               <label htmlFor="filter-bounty" className="text-gray-300">Bounty Status</label>
-//               <Select 
-//                 options={[{ value: "all", label: "All" }, { value: "bounty", label: "Open" }, { value: "non-bounty", label: "Closed" }]} 
-//                 value={filterBounty} 
-//                 onChange={setFilterBounty} 
-//               />
-//             </div>
-//             <div>
-//               <label htmlFor="filter-status" className="text-gray-300">Completion Status</label>
-//               <Select 
-//                 options={[{ value: "all", label: "All" }, { value: "open", label: "Incomplete" }, { value: "closed", label: "Completed" }]} 
-//                 value={filterStatus} 
-//                 onChange={setFilterStatus} 
-//               />
-//             </div>
-//             <div className="relative">
-//               <input 
-//                 type="text" 
-//                 placeholder="Search bounties..." 
-//                 className="bg-gray-700 text-gray-200 border-gray-600 w-full p-2 rounded-lg" 
-//                 value={searchTerm} 
-//                 onChange={e => setSearchTerm(e.target.value)} 
-//               />
-//               <Search className="absolute right-3 top-3 text-gray-400" />
-//             </div>
-//           </div>
-//           <table className="table-auto w-full text-left text-gray-300">
-//             <thead>
-//               <tr>
-//                 <th>Issue Link</th>
-//                 <th>Amount</th>
-//                 <th>Status</th>
-//                 <th>Rewarded To</th>
-//                 <th>Completed</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {filteredBounties.map(bounty => (
-//                 <tr key={bounty.id}>
-//                   <td>{bounty.issueLink}</td>
-//                   <td>ETH{Number(bounty.amount.toString())/1000000000000}</td>
-//                   <td>{bounty.isOpen ? 'Open' : 'Closed'}</td>
-//                   <td>{bounty.rewardee_username || 'Not Assigned'}</td>
-//                   <td>{bounty.isCompleted ? 'Yes' : 'No'}</td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-//         </Card>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ManagerDashboard;
-
-
-

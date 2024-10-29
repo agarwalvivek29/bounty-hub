@@ -1,410 +1,11 @@
- "use client";
-
-// import { useState } from "react";
-// import { ArrowUpDown, Search } from "lucide-react";
-
-// // Mock data for issues
-// const issues = [
-//   { id: 1, title: "Fix login bug", repo: "acme/webapp", status: "Open", bounty: 100, assignee: "johndoe" },
-//   { id: 2, title: "Implement dark mode", repo: "acme/mobile-app", status: "In Progress", bounty: 200, assignee: "janedoe" },
-//   { id: 3, title: "Optimize database queries", repo: "acme/api", status: "Under Review", bounty: 150, assignee: "bobsmith" },
-//   { id: 4, title: "Add unit tests", repo: "acme/webapp", status: "Open", bounty: 75, assignee: null },
-//   { id: 5, title: "Refactor authentication system", repo: "acme/auth", status: "Closed", bounty: 300, assignee: "alicejohnson" },
-// ];
-
-// const ContributorDashboard = () => {
-//     const [filteredIssues, setFilteredIssues] = useState(issues);
-//   const [sortConfig, setSortConfig] = useState({ key: null, direction: "ascending" });
-
-//   const handleSearch = (event) => {
-//     const searchTerm = event.target.value.toLowerCase();
-//     const filtered = issues.filter(
-//       (issue) =>
-//         issue.title.toLowerCase().includes(searchTerm) ||
-//         issue.repo.toLowerCase().includes(searchTerm) ||
-//         (issue.assignee && issue.assignee.toLowerCase().includes(searchTerm))
-//     );
-//     setFilteredIssues(filtered);
-//   };
-
-//   const handleStatusFilter = (status) => {
-//     if (status === "All") {
-//       setFilteredIssues(issues);
-//     } else {
-//       const filtered = issues.filter((issue) => issue.status === status);
-//       setFilteredIssues(filtered);
-//     }
-//   };
-
-//   const handleSort = (key) => {
-//     let direction = "ascending";
-//     if (sortConfig.key === key && sortConfig.direction === "ascending") {
-//       direction = "descending";
-//     }
-//     setSortConfig({ key, direction });
-
-//     const sorted = [...filteredIssues].sort((a, b) => {
-//       if (a[key] < b[key]) return direction === "ascending" ? -1 : 1;
-//       if (a[key] > b[key]) return direction === "ascending" ? 1 : -1;
-//       return 0;
-//     });
-//     setFilteredIssues(sorted);
-//   };
-
-//   const getStatusColor = (status) => {
-//     switch (status) {
-//       case "Open":
-//         return "bg-green-600 text-green-100";
-//       case "In Progress":
-//         return "bg-yellow-600 text-yellow-100";
-//       case "Under Review":
-//         return "bg-blue-600 text-blue-100";
-//       case "Closed":
-//         return "bg-gray-600 text-gray-100";
-//       default:
-//         return "bg-gray-600 text-gray-100";
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-gray-100 p-8">
-//       <div className="bg-gray-800 border border-purple-500 rounded-lg p-6">
-//         <h2 className="text-2xl font-bold text-gray-100 mb-6">All Issues</h2>
-//         <div className="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">
-//           <div className="relative w-full md:w-64">
-//             <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-//             <input
-//               placeholder="Search issues..."
-//               className="pl-8 w-full py-2 bg-gray-700 text-gray-100 border border-gray-600 focus:border-purple-500 rounded"
-//               onChange={handleSearch}
-//             />
-//           </div>
-//           <select
-//             onChange={(e) => handleStatusFilter(e.target.value)}
-//             className="w-full md:w-40 bg-gray-700 text-gray-100 border border-gray-600 focus:border-purple-500 py-2 rounded"
-//           >
-//             <option value="All">All</option>
-//             <option value="Open">Open</option>
-//             <option value="In Progress">In Progress</option>
-//             <option value="Under Review">Under Review</option>
-//             <option value="Closed">Closed</option>
-//           </select>
-//         </div>
-
-//         <div className="overflow-x-auto">
-//           <table className="min-w-full table-auto border-collapse">
-//             <thead className="border-b border-gray-700">
-//               <tr>
-//                 <th className="text-left text-gray-300 py-2">
-//                   <button
-//                     onClick={() => handleSort("title")}
-//                     className="flex items-center text-gray-300 hover:text-purple-400"
-//                   >
-//                     Title <ArrowUpDown className="ml-2 h-4 w-4" />
-//                   </button>
-//                 </th>
-//                 <th className="text-left text-gray-300 py-2">
-//                   <button
-//                     onClick={() => handleSort("repo")}
-//                     className="flex items-center text-gray-300 hover:text-purple-400"
-//                   >
-//                     Repository <ArrowUpDown className="ml-2 h-4 w-4" />
-//                   </button>
-//                 </th>
-//                 <th className="text-left text-gray-300 py-2">Status</th>
-//                 <th className="text-left text-gray-300 py-2">
-//                   <button
-//                     onClick={() => handleSort("bounty")}
-//                     className="flex items-center text-gray-300 hover:text-purple-400"
-//                   >
-//                     Bounty <ArrowUpDown className="ml-2 h-4 w-4" />
-//                   </button>
-//                 </th>
-//                 <th className="text-left text-gray-300 py-2">Assignee</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {filteredIssues.map((issue) => (
-//                 <tr key={issue.id} className="border-b border-gray-700">
-//                   <td className="py-2 text-gray-200">{issue.title}</td>
-//                   <td className="py-2 text-gray-300">{issue.repo}</td>
-//                   <td className="py-2">
-//                     <span className={`px-2 py-1 rounded ${getStatusColor(issue.status)}`}>
-//                       {issue.status}
-//                     </span>
-//                   </td>
-//                   <td className="py-2 text-gray-300">${issue.bounty}</td>
-//                   <td className="py-2 text-gray-300">{issue.assignee || "Unassigned"}</td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default ContributorDashboard;
-
-
-
-
-
-
-
-
-
-
-
-
-// "use client"
-
-// import { client } from "../client";
-// import { defineChain, getContract } from "thirdweb";
-// import React, { useState, useMemo, useEffect } from 'react';
-// import { useReadContract } from "thirdweb/react";
-// import { contractABI } from "../constants/contract";
-// const contract = getContract({
-//   client,
-//   chain: defineChain(84532),
-//   address: "0x96111652DB352b814697e79A846E8CD9C8e11196",
-//   abi:contractABI,
-// });
-
-// const AllIssues = () => {
-//   const { data, isPending, error } = useReadContract({
-//     contract,
-//     method: "function getBounties() view returns ((uint256 id, string issueLink, uint256 amount, address creator, address rewardedTo, address[] assignedTo, bool isOpen, bool isCompleted, string rewardee_username)[])",
-//     params: []
-//   });
-
-//   const [searchTerm, setSearchTerm] = useState('');
-//   const [statusFilter, setStatusFilter] = useState('All');
-//   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
-
-//   // Debug logging
-//   useEffect(() => {
-//     console.log('Contract Data:', {
-//       data,
-//       isPending,
-//       error,
-//       contractAddress: contract.address
-//     });
-//   }, [data, isPending, error]);
-
-//   const bounties = useMemo(() => {
-//     if (!data) {
-//       console.log('No data available');
-//       return [];
-//     }
-
-//     try {
-//       const processedBounties = data.map((bounty) => {
-//         console.log('Processing bounty:', bounty);
-//         return {
-//           id: Number(bounty.id),
-//           issueLink: bounty.issueLink,
-//           amount: (Number(bounty.amount)), // Convert wei to ETH and format
-//           creator: bounty.creator,
-//           rewardedTo: bounty.rewardedTo,
-//           assignedTo: bounty.assignedTo,
-//           isOpen: bounty.isOpen,
-//           isCompleted: bounty.isCompleted,
-//           deadline: bounty.deadline ? Number(bounty.deadline) : 0,
-//           rewardee_username: bounty.rewardee_username || ''
-//         };
-//       });
-//       console.log('Processed bounties:', processedBounties);
-//       return processedBounties;
-//     } catch (error) {
-//       console.error('Error processing bounties:', error);
-//       return [];
-//     }
-//   }, [data]);
-
-//   const filteredBounties = useMemo(() => {
-//     return bounties.filter(bounty => 
-//       (bounty.issueLink.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//        bounty.rewardee_username.toLowerCase().includes(searchTerm.toLowerCase())) &&
-//       (statusFilter === 'All' || 
-//        (statusFilter === 'Open' && bounty.isOpen) ||
-//        (statusFilter === 'Completed' && bounty.isCompleted) ||
-//        (statusFilter === 'In Progress' && !bounty.isCompleted && !bounty.isOpen))
-//     );
-//   }, [bounties, searchTerm, statusFilter]);
-
-//   const sortedBounties = useMemo(() => {
-//     let sortableBounties = [...filteredBounties];
-//     if (sortConfig.key !== null) {
-//       sortableBounties.sort((a, b) => {
-//         if (a[sortConfig.key] < b[sortConfig.key]) {
-//           return sortConfig.direction === 'ascending' ? -1 : 1;
-//         }
-//         if (a[sortConfig.key] > b[sortConfig.key]) {
-//           return sortConfig.direction === 'ascending' ? 1 : -1;
-//         }
-//         return 0;
-//       });
-//     }
-//     return sortableBounties;
-//   }, [filteredBounties, sortConfig]);
-
-//   const handleSort = (key) => {
-//     let direction = 'ascending';
-//     if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-//       direction = 'descending';
-//     }
-//     setSortConfig({ key, direction });
-//   };
-
-//   const getStatusColor = (bounty) => {
-//     if (bounty.isCompleted) return '#10B981'; // green
-//     if (bounty.isOpen) return '#3B82F6'; // blue
-//     return '#FBBF24'; // yellow
-//   };
-
-//   const getStatus = (bounty) => {
-//     if (bounty.isCompleted) return 'Completed';
-//     if (bounty.isOpen) return 'Open';
-//     return 'In Progress';
-//   };
-
-//   const formatDate = (timestamp) => {
-//     if (!timestamp) return 'No deadline';
-//     return new Date(timestamp * 1000).toLocaleDateString();
-//   };
-
-//   if (error) {
-//     return (
-//       <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white p-8 flex items-center justify-center">
-//         <div className="bg-red-500/10 border border-red-500 rounded-lg p-4 max-w-md w-full">
-//           <h3 className="text-red-500 font-bold mb-2">Error Loading Bounties</h3>
-//           <p>{error.message}</p>
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   if (isPending) {
-//     return (
-//       <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white p-8 flex items-center justify-center">
-//         <div className="animate-pulse">Loading bounties...</div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white p-8">
-//       <div className="bg-gray-800 border border-purple-500 rounded-lg p-6">
-//         <h2 className="text-2xl font-bold mb-6">All Bounties</h2>
-        
-//         <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
-//           <input
-//             type="text"
-//             placeholder="Search bounties..."
-//             onChange={(e) => setSearchTerm(e.target.value)}
-//             className="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-purple-500"
-//           />
-          
-//           <select
-//             onChange={(e) => setStatusFilter(e.target.value)}
-//             className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-purple-500"
-//           >
-//             <option value="All">All Status</option>
-//             <option value="Open">Open</option>
-//             <option value="In Progress">In Progress</option>
-//             <option value="Completed">Completed</option>
-//           </select>
-//         </div>
-
-//         <div className="overflow-x-auto">
-//           <table className="w-full">
-//             <thead>
-//               <tr className="border-b border-gray-700">
-//                 <th 
-//                   onClick={() => handleSort('id')}
-//                   className="px-6 py-3 text-left cursor-pointer hover:text-purple-400"
-//                 >
-//                   ID
-//                 </th>
-//                 <th 
-//                   onClick={() => handleSort('issueLink')}
-//                   className="px-6 py-3 text-left cursor-pointer hover:text-purple-400"
-//                 >
-//                   Issue Link
-//                 </th>
-//                 <th className="px-6 py-3 text-left">Status</th>
-//                 <th 
-//                   onClick={() => handleSort('amount')}
-//                   className="px-6 py-3 text-left cursor-pointer hover:text-purple-400"
-//                 >
-//                   Amount (Wei)
-//                 </th>
-//                 <th className="px-6 py-3 text-left">Assignee</th>
-//                 <th 
-//                   onClick={() => handleSort('deadline')}
-//                   className="px-6 py-3 text-left cursor-pointer hover:text-purple-400"
-//                 >
-//                   Deadline
-//                 </th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {sortedBounties.length === 0 ? (
-//                 <tr>
-//                   <td colSpan="6" className="px-6 py-4 text-center text-gray-400">
-//                     No bounties found
-//                   </td>
-//                 </tr>
-//               ) : (
-//                 sortedBounties.map((bounty) => (
-//                   <tr key={bounty.id} className="border-b border-gray-700 hover:bg-gray-700/50">
-//                     <td className="px-6 py-4">{bounty.id}</td>
-//                     <td className="px-6 py-4">
-//                       <a 
-//                         href={bounty.issueLink}
-//                         target="_blank"
-//                         rel="noopener noreferrer"
-//                         className="text-purple-400 hover:text-purple-300 hover:underline"
-//                       >
-//                         {new URL(bounty.issueLink).pathname.slice(1)}
-//                       </a>
-//                     </td>
-//                     <td className="px-6 py-4">
-//                       <span
-//                         className="px-3 py-1 rounded-full text-sm"
-//                         style={{ backgroundColor: getStatusColor(bounty) }}
-//                       >
-//                         {getStatus(bounty)}
-//                       </span>
-//                     </td>
-//                     <td className="px-6 py-4">{bounty.amount}</td>
-//                     <td className="px-6 py-4">
-//                       {bounty.rewardee_username || 'Unassigned'}
-//                     </td>
-//                   </tr>
-//                 ))
-//               )}
-//             </tbody>
-//           </table>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default AllIssues;
-
-
-
-
+"use client";
 
 import { client } from "../client";
 import { defineChain, getContract } from "thirdweb";
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from "react";
 import { useReadContract } from "thirdweb/react";
 import { contractABI } from "../constants/contract";
+import { Search, ArrowUpDown, ExternalLink } from "lucide-react";
 
 const contract = getContract({
   client,
@@ -413,43 +14,75 @@ const contract = getContract({
   abi: contractABI,
 });
 
+const STATUS_TABS = ["All", "Open", "In Progress", "Completed"];
+
+function parseRepo(issueLink) {
+  const match = issueLink.match(/github\.com\/([^/]+)\/([^/]+)/);
+  return match ? `${match[1]}/${match[2]}` : issueLink;
+}
+
+function StatusBadge({ isOpen, isCompleted }) {
+  if (isCompleted)
+    return (
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+        Completed
+      </span>
+    );
+  if (isOpen)
+    return (
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
+        Open
+      </span>
+    );
+  return (
+    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+      In Progress
+    </span>
+  );
+}
+
+function SkeletonCard() {
+  return (
+    <div className="bg-[#111827]/80 border border-white/10 rounded-2xl p-6 animate-pulse">
+      <div className="flex justify-between items-start mb-3">
+        <div className="h-4 bg-white/10 rounded w-3/4" />
+        <div className="h-5 bg-white/10 rounded-full w-16" />
+      </div>
+      <div className="h-3 bg-white/10 rounded w-1/2 mb-4" />
+      <div className="flex justify-between items-center">
+        <div className="h-5 bg-white/10 rounded-full w-20" />
+        <div className="h-4 bg-white/10 rounded w-24" />
+      </div>
+    </div>
+  );
+}
+
 const AllIssues = () => {
   const { data, isPending, error } = useReadContract({
     contract,
-    method: "function getBounties() view returns ((uint256 id, string issueLink, uint256 amount, address creator, address rewardedTo, address[] assignedTo, bool isOpen, bool isCompleted, string rewardee_username)[])",
-    params: []
+    method:
+      "function getBounties() view returns ((uint256 id, string issueLink, uint256 amount, address creator, address rewardedTo, address[] assignedTo, bool isOpen, bool isCompleted, string rewardee_username)[])",
+    params: [],
   });
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('All');
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeTab, setActiveTab] = useState("All");
+  const [sortDesc, setSortDesc] = useState(true);
   const [issueTitles, setIssueTitles] = useState({});
 
   const bounties = useMemo(() => {
-    if (!data) {
-      console.log('No data available');
-      return [];
-    }
-
-    try {
-      const processedBounties = data.map((bounty) => ({
-        id: Number(bounty.id),
-        issueLink: bounty.issueLink,
-        amount: Number(bounty.amount),
-        creator: bounty.creator,
-        rewardedTo: bounty.rewardedTo,
-        assignedTo: bounty.assignedTo,
-        isOpen: bounty.isOpen,
-        isCompleted: bounty.isCompleted,
-        deadline: bounty.deadline ? Number(bounty.deadline) : 0,
-        rewardee_username: bounty.rewardee_username || ''
-      }));
-      console.log('Processed bounties:', processedBounties);
-      return processedBounties;
-    } catch (error) {
-      console.error('Error processing bounties:', error);
-      return [];
-    }
+    if (!data) return [];
+    return data.map((bounty) => ({
+      id: Number(bounty.id),
+      issueLink: bounty.issueLink,
+      amount: Number(bounty.amount),
+      creator: bounty.creator,
+      rewardedTo: bounty.rewardedTo,
+      assignedTo: bounty.assignedTo,
+      isOpen: bounty.isOpen,
+      isCompleted: bounty.isCompleted,
+      rewardee_username: bounty.rewardee_username || "",
+    }));
   }, [data]);
 
   useEffect(() => {
@@ -458,22 +91,24 @@ const AllIssues = () => {
       for (const bounty of bounties) {
         if (bounty.issueLink) {
           try {
-            const match = bounty.issueLink.match(/github\.com\/([^/]+)\/([^/]+)\/issues\/(\d+)/);
+            const match = bounty.issueLink.match(
+              /github\.com\/([^/]+)\/([^/]+)\/issues\/(\d+)/
+            );
             if (match) {
               const [, owner, repo, issue_number] = match;
-              const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issue_number}`);
+              const response = await fetch(
+                `https://api.github.com/repos/${owner}/${repo}/issues/${issue_number}`
+              );
               if (response.ok) {
                 const issueData = await response.json();
                 titles[bounty.id] = issueData.title;
               } else {
-                // If we can't fetch the title, we'll use the issue link
                 titles[bounty.id] = null;
               }
             } else {
               titles[bounty.id] = null;
             }
-          } catch (error) {
-            console.error(`Error fetching issue title for ${bounty.issueLink}:`, error);
+          } catch {
             titles[bounty.id] = null;
           }
         } else {
@@ -482,447 +117,143 @@ const AllIssues = () => {
       }
       setIssueTitles(titles);
     };
-
-    if (bounties.length > 0) {
-      fetchIssueTitles();
-    }
+    if (bounties.length > 0) fetchIssueTitles();
   }, [bounties]);
 
   const filteredBounties = useMemo(() => {
-    return bounties.filter(bounty => 
-      ((issueTitles[bounty.id] && issueTitles[bounty.id].toLowerCase().includes(searchTerm.toLowerCase())) ||
-       bounty.issueLink.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       bounty.rewardee_username.toLowerCase().includes(searchTerm.toLowerCase())) &&
-      (statusFilter === 'All' || 
-       (statusFilter === 'Open' && bounty.isOpen) ||
-       (statusFilter === 'Completed' && bounty.isCompleted) ||
-       (statusFilter === 'In Progress' && !bounty.isCompleted && !bounty.isOpen))
+    let result = bounties.filter((bounty) => {
+      const titleMatch =
+        (issueTitles[bounty.id] &&
+          issueTitles[bounty.id].toLowerCase().includes(searchTerm.toLowerCase())) ||
+        bounty.issueLink.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        bounty.rewardee_username.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const tabMatch =
+        activeTab === "All" ||
+        (activeTab === "Open" && bounty.isOpen) ||
+        (activeTab === "Completed" && bounty.isCompleted) ||
+        (activeTab === "In Progress" && !bounty.isCompleted && !bounty.isOpen);
+
+      return titleMatch && tabMatch;
+    });
+
+    result = [...result].sort((a, b) =>
+      sortDesc ? b.amount - a.amount : a.amount - b.amount
     );
-  }, [bounties, issueTitles, searchTerm, statusFilter]);
 
-  const sortedBounties = useMemo(() => {
-    let sortableBounties = [...filteredBounties];
-    if (sortConfig.key !== null) {
-      sortableBounties.sort((a, b) => {
-        if (sortConfig.key === 'issueTitle') {
-          const titleA = issueTitles[a.id] || a.issueLink || '';
-          const titleB = issueTitles[b.id] || b.issueLink || '';
-          return sortConfig.direction === 'ascending' 
-            ? titleA.localeCompare(titleB)
-            : titleB.localeCompare(titleA);
-        }
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-    return sortableBounties;
-  }, [filteredBounties, sortConfig, issueTitles]);
-
-  const handleSort = (key) => {
-    let direction = 'ascending';
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
-    }
-    setSortConfig({ key, direction });
-  };
-
-  const getStatusColor = (bounty) => {
-    if (bounty.isCompleted) return '#10B981'; // green
-    if (bounty.isOpen) return '#3B82F6'; // blue
-    return '#FBBF24'; // yellow
-  };
-
-  const getStatus = (bounty) => {
-    if (bounty.isCompleted) return 'Completed';
-    if (bounty.isOpen) return 'Open';
-    return 'In Progress';
-  };
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white p-8 flex items-center justify-center">
-        <div className="bg-red-500/10 border border-red-500 rounded-lg p-4 max-w-md w-full">
-          <h3 className="text-red-500 font-bold mb-2">Error Loading Bounties</h3>
-          <p>{error.message}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (isPending) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white p-8 flex items-center justify-center">
-        <div className="animate-pulse">Loading bounties...</div>
-      </div>
-    );
-  }
+    return result;
+  }, [bounties, issueTitles, searchTerm, activeTab, sortDesc]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white p-8">
-      <div className="bg-gray-800 border border-purple-500 rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-6">All Bounties</h2>
-        
-        <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
-          <input
-            type="text"
-            placeholder="Search bounties..."
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-purple-500"
-          />
-          
-          <select
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-purple-500"
+    <div
+      className="min-h-screen bg-[#0d0d1a] text-white"
+      style={{
+        backgroundImage:
+          "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0)",
+        backgroundSize: "32px 32px",
+      }}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-white">Open Bounties</h1>
+            <p className="text-gray-500 mt-1 text-sm">
+              {isPending ? "Loading…" : `${bounties.length} bounties across all repos`}
+            </p>
+          </div>
+          <button
+            onClick={() => setSortDesc(!sortDesc)}
+            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors self-start sm:self-auto"
           >
-            <option value="All">All Status</option>
-            <option value="Open">Open</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Completed">Completed</option>
-          </select>
+            <ArrowUpDown size={14} />
+            Amount {sortDesc ? "High → Low" : "Low → High"}
+          </button>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-700">
-                <th 
-                  onClick={() => handleSort('id')}
-                  className="px-6 py-3 text-left cursor-pointer hover:text-purple-400"
-                >
-                  ID
-                </th>
-                <th 
-                  onClick={() => handleSort('issueTitle')}
-                  className="px-6 py-3 text-left cursor-pointer hover:text-purple-400"
-                >
-                  Issue
-                </th>
-                <th className="px-6 py-3 text-left">Status</th>
-                <th 
-                  onClick={() => handleSort('amount')}
-                  className="px-6 py-3 text-left cursor-pointer hover:text-purple-400"
-                >
-                  Amount (ETH)
-                </th>
-                <th className="px-6 py-3 text-left">Assignee</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedBounties.length === 0 ? (
-                <tr>
-                  <td colSpan="5" className="px-6 py-4 text-center text-gray-400">
-                    No bounties found
-                  </td>
-                </tr>
-              ) : (
-                sortedBounties.map((bounty) => (
-                  <tr key={bounty.id} className="border-b border-gray-700 hover:bg-gray-700/50">
-                    <td className="px-6 py-4">{bounty.id}</td>
-                    <td className="px-6 py-4">
-                      <a 
-                        href={bounty.issueLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-purple-400 hover:text-purple-300 hover:underline"
-                      >
-                        {issueTitles[bounty.id] || bounty.issueLink}
-                      </a>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className="px-3 py-1 rounded-full text-sm"
-                        style={{ backgroundColor: getStatusColor(bounty) }}
-                      >
-                        {getStatus(bounty)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">{(bounty.amount / (10 ** 18))}</td>
-                    <td className="px-6 py-4">
-                      {bounty.rewardee_username || 'Unassigned'}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+        {/* Search */}
+        <div className="relative mb-6">
+          <Search
+            size={16}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
+          />
+          <input
+            type="text"
+            placeholder="Search by issue title, repo, or contributor…"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-11 pr-4 py-3 bg-[#111827]/80 border border-white/10 rounded-xl text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:border-purple-500/50 transition-colors"
+          />
         </div>
+
+        {/* Filter Tabs */}
+        <div className="flex gap-2 mb-8 overflow-x-auto pb-1">
+          {STATUS_TABS.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-colors ${
+                activeTab === tab
+                  ? "bg-purple-500/20 text-purple-300 border border-purple-500/30"
+                  : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* Cards */}
+        {isPending ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
+        ) : filteredBounties.length === 0 ? (
+          <div className="text-center py-20 text-gray-600">
+            <p className="text-lg mb-1">No bounties found</p>
+            <p className="text-sm">Try adjusting your search or filter</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {filteredBounties.map((bounty) => (
+              <div
+                key={bounty.id}
+                className="group bg-[#111827]/80 border border-white/10 hover:border-purple-500/30 rounded-2xl p-6 transition-colors backdrop-blur-sm"
+              >
+                <div className="flex justify-between items-start gap-3 mb-2">
+                  <h3 className="text-sm font-medium text-gray-200 leading-snug line-clamp-2">
+                    {issueTitles[bounty.id] || "Loading title…"}
+                  </h3>
+                  <StatusBadge isOpen={bounty.isOpen} isCompleted={bounty.isCompleted} />
+                </div>
+
+                <p className="text-xs text-gray-600 mb-5 font-mono">
+                  {parseRepo(bounty.issueLink)}
+                </p>
+
+                <div className="flex items-center justify-between">
+                  <span className="px-3 py-1 bg-purple-500/10 border border-purple-500/20 rounded-full text-sm font-semibold text-purple-300">
+                    {(bounty.amount / 1e18).toFixed(4)} ETH
+                  </span>
+                  <a
+                    href={bounty.issueLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300 transition-colors"
+                  >
+                    View Issue
+                    <ExternalLink size={12} />
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
 export default AllIssues;
-
-
-
-
-
-
-
-
-
-// "use client"
-
-// import { client } from "../client";
-// import { defineChain, getContract } from "thirdweb";
-// import React, { useState, useMemo, useEffect } from 'react';
-// import { useReadContract } from "thirdweb/react";
-// import { contractABI } from "../constants/contract";
-
-// const contract = getContract({
-//   client,
-//   chain: defineChain(84532),
-//   address: "0x96111652DB352b814697e79A846E8CD9C8e11196",
-//   abi: contractABI,
-// });
-
-// const AllIssues = () => {
-//   const { data, isPending, error } = useReadContract({
-//     contract,
-//     method: "function getBounties() view returns ((uint256 id, string issueLink, uint256 amount, address creator, address rewardedTo, address[] assignedTo, bool isOpen, bool isCompleted, string rewardee_username)[])",
-//     params: []
-//   });
-
-//   const [searchTerm, setSearchTerm] = useState('');
-//   const [statusFilter, setStatusFilter] = useState('All');
-//   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
-//   const [issueTitles, setIssueTitles] = useState({});
-
-//   const bounties = useMemo(() => {
-//     if (!data) {
-//       console.log('No data available');
-//       return [];
-//     }
-
-//     try {
-//       const processedBounties = data.map((bounty) => ({
-//         id: Number(bounty.id),
-//         issueLink: bounty.issueLink,
-//         amount: Number(bounty.amount),
-//         creator: bounty.creator,
-//         rewardedTo: bounty.rewardedTo,
-//         assignedTo: bounty.assignedTo,
-//         isOpen: bounty.isOpen,
-//         isCompleted: bounty.isCompleted,
-//         deadline: bounty.deadline ? Number(bounty.deadline) : 0,
-//         rewardee_username: bounty.rewardee_username || ''
-//       }));
-//       console.log('Processed bounties:', processedBounties);
-//       return processedBounties;
-//     } catch (error) {
-//       console.error('Error processing bounties:', error);
-//       return [];
-//     }
-//   }, [data]);
-
-//   useEffect(() => {
-//     const fetchIssueTitles = async () => {
-//       const titles = {};
-//       for (const bounty of bounties) {
-//         if (bounty.issueLink) {
-//           try {
-//             const match = bounty.issueLink.match(/github\.com\/([^/]+)\/([^/]+)\/issues\/(\d+)/);
-//             console.log("MATCH:  ",match)
-//             if (match) {
-//               const [, owner, repo, issue_number] = match;
-//               const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issue_number}`);
-//               if (response.ok) {
-//                 const issueData = await response.json();
-//                 titles[bounty.id] = issueData.title;
-//               } else if (response.status === 404) {
-//                 titles[bounty.id] = 'Issue not found (may be private or deleted)';
-//               } else {
-//                 titles[bounty.id] = `Error: ${response.status}`;
-//               }
-//             } else {
-//               titles[bounty.id] = 'Invalid GitHub issue link';
-//             }
-//           } catch (error) {
-//             console.error(`Error fetching issue title for ${bounty.issueLink}:`, error);
-//             titles[bounty.id] = 'Error fetching title';
-//           }
-//         } else {
-//           titles[bounty.id] = 'No issue link provided';
-//         }
-//       }
-//       setIssueTitles(titles);
-//     };
-
-//     if (bounties.length > 0) {
-//       fetchIssueTitles();
-//     }
-//   }, [bounties]);
-
-//   const filteredBounties = useMemo(() => {
-//     return bounties.filter(bounty => 
-//       ((issueTitles[bounty.id] && issueTitles[bounty.id].toLowerCase().includes(searchTerm.toLowerCase())) ||
-//        bounty.rewardee_username.toLowerCase().includes(searchTerm.toLowerCase())) &&
-//       (statusFilter === 'All' || 
-//        (statusFilter === 'Open' && bounty.isOpen) ||
-//        (statusFilter === 'Completed' && bounty.isCompleted) ||
-//        (statusFilter === 'In Progress' && !bounty.isCompleted && !bounty.isOpen))
-//     );
-//   }, [bounties, issueTitles, searchTerm, statusFilter]);
-
-//   const sortedBounties = useMemo(() => {
-//     let sortableBounties = [...filteredBounties];
-//     if (sortConfig.key !== null) {
-//       sortableBounties.sort((a, b) => {
-//         if (sortConfig.key === 'issueTitle') {
-//           const titleA = issueTitles[a.id] || '';
-//           const titleB = issueTitles[b.id] || '';
-//           return sortConfig.direction === 'ascending' 
-//             ? titleA.localeCompare(titleB)
-//             : titleB.localeCompare(titleA);
-//         }
-//         if (a[sortConfig.key] < b[sortConfig.key]) {
-//           return sortConfig.direction === 'ascending' ? -1 : 1;
-//         }
-//         if (a[sortConfig.key] > b[sortConfig.key]) {
-//           return sortConfig.direction === 'ascending' ? 1 : -1;
-//         }
-//         return 0;
-//       });
-//     }
-//     return sortableBounties;
-//   }, [filteredBounties, sortConfig, issueTitles]);
-
-//   const handleSort = (key) => {
-//     let direction = 'ascending';
-//     if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-//       direction = 'descending';
-//     }
-//     setSortConfig({ key, direction });
-//   };
-
-//   const getStatusColor = (bounty) => {
-//     if (bounty.isCompleted) return '#10B981'; // green
-//     if (bounty.isOpen) return '#3B82F6'; // blue
-//     return '#FBBF24'; // yellow
-//   };
-
-//   const getStatus = (bounty) => {
-//     if (bounty.isCompleted) return 'Completed';
-//     if (bounty.isOpen) return 'Open';
-//     return 'In Progress';
-//   };
-
-//   if (error) {
-//     return (
-//       <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white p-8 flex items-center justify-center">
-//         <div className="bg-red-500/10 border border-red-500 rounded-lg p-4 max-w-md w-full">
-//           <h3 className="text-red-500 font-bold mb-2">Error Loading Bounties</h3>
-//           <p>{error.message}</p>
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   if (isPending) {
-//     return (
-//       <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white p-8 flex items-center justify-center">
-//         <div className="animate-pulse">Loading bounties...</div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white p-8">
-//       <div className="bg-gray-800 border border-purple-500 rounded-lg p-6">
-//         <h2 className="text-2xl font-bold mb-6">All Bounties</h2>
-        
-//         <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
-//           <input
-//             type="text"
-//             placeholder="Search bounties..."
-//             onChange={(e) => setSearchTerm(e.target.value)}
-//             className="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-purple-500"
-//           />
-          
-//           <select
-//             onChange={(e) => setStatusFilter(e.target.value)}
-//             className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-purple-500"
-//           >
-//             <option value="All">All Status</option>
-//             <option value="Open">Open</option>
-//             <option value="In Progress">In Progress</option>
-//             <option value="Completed">Completed</option>
-//           </select>
-//         </div>
-
-//         <div className="overflow-x-auto">
-//           <table className="w-full">
-//             <thead>
-//               <tr className="border-b border-gray-700">
-//                 <th 
-//                   onClick={() => handleSort('id')}
-//                   className="px-6 py-3 text-left cursor-pointer hover:text-purple-400"
-//                 >
-//                   ID
-//                 </th>
-//                 <th 
-//                   onClick={() => handleSort('issueTitle')}
-//                   className="px-6 py-3 text-left cursor-pointer hover:text-purple-400"
-//                 >
-//                   Issue Title
-//                 </th>
-//                 <th className="px-6 py-3 text-left">Status</th>
-//                 <th 
-//                   onClick={() => handleSort('amount')}
-//                   className="px-6 py-3 text-left cursor-pointer hover:text-purple-400"
-//                 >
-//                   Amount (ETH)
-//                 </th>
-//                 <th className="px-6 py-3 text-left">Assignee</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {sortedBounties.length === 0 ? (
-//                 <tr>
-//                   <td colSpan="5" className="px-6 py-4 text-center text-gray-400">
-//                     No bounties found
-//                   </td>
-//                 </tr>
-//               ) : (
-//                 sortedBounties.map((bounty) => (
-//                   <tr key={bounty.id} className="border-b border-gray-700 hover:bg-gray-700/50">
-//                     <td className="px-6 py-4">{bounty.id}</td>
-//                     <td className="px-6 py-4">
-//                       <a 
-//                         href={bounty.issueLink}
-//                         target="_blank"
-//                         rel="noopener noreferrer"
-//                         className="text-purple-400 hover:text-purple-300 hover:underline"
-//                       >
-//                         {issueTitles[bounty.id] || 'Loading...'}
-//                       </a>
-//                     </td>
-//                     <td className="px-6 py-4">
-//                       <span
-//                         className="px-3 py-1 rounded-full text-sm"
-//                         style={{ backgroundColor: getStatusColor(bounty) }}
-//                       >
-//                         {getStatus(bounty)}
-//                       </span>
-//                     </td>
-//                     <td className="px-6 py-4">{bounty.amount/1000000000000}</td>
-//                     <td className="px-6 py-4">
-//                       {bounty.rewardee_username || 'Unassigned'}
-//                     </td>
-//                   </tr>
-//                 ))
-//               )}
-//             </tbody>
-//           </table>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default AllIssues;
