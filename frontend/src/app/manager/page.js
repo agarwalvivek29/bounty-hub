@@ -6,7 +6,7 @@ import { useActiveAccount, useReadContract, useSendTransaction } from "thirdweb/
 import { contractABI } from "../constants/contract";
 import { defineChain, getContract, prepareContractCall } from "thirdweb";
 import { client } from "../client";
-import { ConnectButton, lightTheme } from "thirdweb/react";
+import { ConnectButton } from "thirdweb/react";
 
 const contract = getContract({
   client,
@@ -26,12 +26,12 @@ function StatusBadge({ isOpen, isCompleted }) {
     );
   if (isOpen)
     return (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-sky-500/10 text-sky-400 border border-sky-500/20">
         Open
       </span>
     );
   return (
-    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
       In Progress
     </span>
   );
@@ -42,7 +42,7 @@ const ManagerDashboard = () => {
   const [activeTab, setActiveTab] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [depositAmount, setDepositAmount] = useState("");
-  const [depositStatus, setDepositStatus] = useState(null); // null | 'pending' | 'success' | 'error'
+  const [depositStatus, setDepositStatus] = useState(null);
   const { mutate: sendTransaction } = useSendTransaction();
 
   const { data: bountiesData, isPending: isBountiesPending } = useReadContract({
@@ -114,28 +114,28 @@ const ManagerDashboard = () => {
   };
 
   const handleAddToGitHub = () => {
-    window.open("https://github.com/apps/tst-app-vivk/installations/new", "_blank");
+    window.open("https://github.com/apps/bounty-birbal-bot/installations/new", "_blank");
   };
 
   if (!account) {
     return (
       <div
-        className="min-h-screen bg-[#0d0d1a] flex items-center justify-center"
+        className="min-h-screen bg-[#0f0e0c] flex items-center justify-center"
         style={{
           backgroundImage:
-            "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0)",
-          backgroundSize: "32px 32px",
+            "radial-gradient(circle at 1px 1px, rgba(245,158,11,0.04) 1px, transparent 0)",
+          backgroundSize: "36px 36px",
         }}
       >
-        <div className="bg-[#111827]/80 border border-white/10 rounded-2xl p-10 text-center max-w-md w-full mx-4 backdrop-blur-sm">
-          <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center mx-auto mb-4">
-            <Wallet size={22} className="text-purple-400" />
+        <div className="bg-[#1a1814] border border-[#2a2520] rounded-2xl p-10 text-center max-w-md w-full mx-4">
+          <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-4">
+            <Wallet size={22} className="text-amber-400" />
           </div>
-          <h2 className="text-xl font-bold text-white mb-2">Maintainer Dashboard</h2>
-          <p className="text-gray-500 text-sm mb-6">
+          <h2 className="text-xl font-bold text-[#fafaf9] mb-2">Maintainer Dashboard</h2>
+          <p className="text-[#78716c] text-sm mb-6">
             Connect your wallet to manage bounties and track your repos.
           </p>
-          <ConnectButton client={client} theme={lightTheme()} />
+          <ConnectButton client={client} />
         </div>
       </div>
     );
@@ -143,40 +143,40 @@ const ManagerDashboard = () => {
 
   return (
     <div
-      className="min-h-screen bg-[#0d0d1a] text-white"
+      className="min-h-screen bg-[#0f0e0c] text-[#fafaf9]"
       style={{
         backgroundImage:
-          "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0)",
-        backgroundSize: "32px 32px",
+          "radial-gradient(circle at 1px 1px, rgba(245,158,11,0.04) 1px, transparent 0)",
+        backgroundSize: "36px 36px",
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
-          <aside className="w-full lg:w-72 shrink-0">
-            <div className="bg-[#111827]/80 border border-white/10 rounded-2xl p-6 backdrop-blur-sm mb-4">
+          <aside className="w-full lg:w-72 shrink-0 space-y-4">
+            <div className="bg-[#1a1814] border border-[#2a2520] rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-sm">
                   {account.address.slice(2, 4).toUpperCase()}
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 mb-0.5">Connected Wallet</p>
-                  <p className="text-sm font-mono text-gray-300">
+                  <p className="text-xs text-[#78716c] mb-0.5">Connected Wallet</p>
+                  <p className="text-sm font-mono text-stone-300">
                     {account.address.slice(0, 6)}…{account.address.slice(-4)}
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <Wallet size={14} />
-                  <span className="font-mono text-xs truncate">{account.address}</span>
+              <div className="mb-6">
+                <div className="flex items-center gap-2 text-xs text-[#78716c]">
+                  <Wallet size={12} />
+                  <span className="font-mono truncate">{account.address}</span>
                 </div>
               </div>
 
               <button
                 onClick={handleAddToGitHub}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium rounded-xl transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-amber-500 hover:bg-amber-400 text-black text-sm font-semibold rounded-xl transition-colors"
               >
                 <Github size={16} />
                 Add to GitHub
@@ -184,9 +184,9 @@ const ManagerDashboard = () => {
             </div>
 
             {/* Deposit Card */}
-            <div className="bg-[#111827]/80 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
-              <h3 className="text-sm font-semibold text-white mb-1">Deposit Funds</h3>
-              <p className="text-xs text-gray-600 mb-4">Add ETH to your bounty pool</p>
+            <div className="bg-[#1a1814] border border-[#2a2520] rounded-2xl p-6">
+              <h3 className="text-sm font-semibold text-[#fafaf9] mb-1">Deposit Funds</h3>
+              <p className="text-xs text-[#78716c] mb-4">Add ETH to your bounty pool</p>
               <div className="relative mb-3">
                 <input
                   type="number"
@@ -196,16 +196,16 @@ const ManagerDashboard = () => {
                     setDepositAmount(e.target.value);
                     setDepositStatus(null);
                   }}
-                  className="w-full px-4 py-2.5 pr-14 bg-[#0d0d1a] border border-white/10 focus:border-purple-500/50 rounded-xl text-sm text-gray-200 placeholder-gray-700 focus:outline-none transition-colors"
+                  className="w-full px-4 py-2.5 pr-14 bg-[#0f0e0c] border border-[#2a2520] focus:border-amber-500/40 rounded-xl text-sm text-stone-200 placeholder-stone-700 focus:outline-none transition-colors"
                 />
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-600 font-mono">
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-stone-600 font-mono">
                   ETH
                 </span>
               </div>
               <button
                 onClick={handleDepositFunds}
                 disabled={depositStatus === "pending"}
-                className="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-medium text-gray-300 hover:text-white rounded-xl transition-colors disabled:opacity-50"
+                className="w-full py-2.5 bg-[#2a2520] hover:bg-[#3a3025] border border-[#3a3025] text-sm font-medium text-stone-300 hover:text-[#fafaf9] rounded-xl transition-colors disabled:opacity-50"
               >
                 {depositStatus === "pending" ? "Confirming…" : "Deposit"}
               </button>
@@ -235,39 +235,39 @@ const ManagerDashboard = () => {
                 {
                   label: "Total Deposited",
                   value: isFundsPending ? "—" : `${funds.totalFunds.toFixed(4)} ETH`,
-                  color: "text-white",
+                  color: "text-[#fafaf9]",
                 },
                 {
                   label: "Locked in Bounties",
                   value: isFundsPending ? "—" : `${funds.blockedFunds.toFixed(4)} ETH`,
-                  color: "text-yellow-400",
+                  color: "text-amber-400",
                 },
               ].map((s) => (
                 <div
                   key={s.label}
-                  className="bg-[#111827]/80 border border-white/10 rounded-2xl p-5 backdrop-blur-sm"
+                  className="bg-[#1a1814] border border-[#2a2520] rounded-2xl p-5"
                 >
-                  <p className="text-xs text-gray-600 mb-2">{s.label}</p>
+                  <p className="text-xs text-[#78716c] mb-2">{s.label}</p>
                   <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
                 </div>
               ))}
             </div>
 
             {/* Bounties */}
-            <div className="bg-[#111827]/80 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
+            <div className="bg-[#1a1814] border border-[#2a2520] rounded-2xl p-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <h2 className="text-base font-semibold text-white">Your Bounties</h2>
+                <h2 className="text-base font-semibold text-[#fafaf9]">Your Bounties</h2>
                 <div className="relative">
                   <Search
                     size={14}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-600"
                   />
                   <input
                     type="text"
                     placeholder="Search…"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-9 pr-4 py-2 bg-[#0d0d1a] border border-white/10 rounded-lg text-sm text-gray-300 placeholder-gray-700 focus:outline-none focus:border-purple-500/40 transition-colors w-full sm:w-56"
+                    className="pl-9 pr-4 py-2 bg-[#0f0e0c] border border-[#2a2520] rounded-lg text-sm text-stone-300 placeholder-stone-700 focus:outline-none focus:border-amber-500/40 transition-colors w-full sm:w-56"
                   />
                 </div>
               </div>
@@ -280,8 +280,8 @@ const ManagerDashboard = () => {
                     onClick={() => setActiveTab(tab)}
                     className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
                       activeTab === tab
-                        ? "bg-purple-500/20 text-purple-300 border border-purple-500/30"
-                        : "text-gray-600 hover:text-gray-400 hover:bg-white/5"
+                        ? "bg-amber-500/15 text-amber-400 border border-amber-500/30"
+                        : "text-stone-600 hover:text-stone-400 hover:bg-[#2a2520]"
                     }`}
                   >
                     {tab}
@@ -293,33 +293,33 @@ const ManagerDashboard = () => {
               {isBountiesPending ? (
                 <div className="space-y-3">
                   {Array.from({ length: 3 }).map((_, i) => (
-                    <div key={i} className="h-12 bg-white/5 rounded-xl animate-pulse" />
+                    <div key={i} className="h-12 bg-[#2a2520] rounded-xl animate-pulse" />
                   ))}
                 </div>
               ) : filteredBounties.length === 0 ? (
-                <div className="text-center py-12 text-gray-700">
+                <div className="text-center py-12 text-stone-700">
                   <p>No bounties found</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-white/5">
-                        <th className="text-left text-xs text-gray-600 font-medium pb-3 pr-4">
+                      <tr className="border-b border-[#2a2520]">
+                        <th className="text-left text-xs text-[#78716c] font-medium pb-3 pr-4">
                           Issue
                         </th>
-                        <th className="text-left text-xs text-gray-600 font-medium pb-3 pr-4">
+                        <th className="text-left text-xs text-[#78716c] font-medium pb-3 pr-4">
                           Amount
                         </th>
-                        <th className="text-left text-xs text-gray-600 font-medium pb-3 pr-4">
+                        <th className="text-left text-xs text-[#78716c] font-medium pb-3 pr-4">
                           Status
                         </th>
-                        <th className="text-left text-xs text-gray-600 font-medium pb-3">
+                        <th className="text-left text-xs text-[#78716c] font-medium pb-3">
                           Rewarded To
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5">
+                    <tbody className="divide-y divide-[#2a2520]">
                       {filteredBounties.map((bounty) => (
                         <tr key={bounty.id} className="group">
                           <td className="py-3 pr-4">
@@ -327,7 +327,7 @@ const ManagerDashboard = () => {
                               href={bounty.issueLink}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-1.5 text-gray-400 hover:text-purple-400 transition-colors max-w-xs truncate"
+                              className="flex items-center gap-1.5 text-stone-400 hover:text-amber-400 transition-colors max-w-xs truncate"
                             >
                               <span className="truncate">
                                 {bounty.issueLink.replace("https://github.com/", "")}
@@ -336,14 +336,14 @@ const ManagerDashboard = () => {
                             </a>
                           </td>
                           <td className="py-3 pr-4">
-                            <span className="font-mono text-gray-300 text-xs">
+                            <span className="font-mono text-stone-300 text-xs">
                               {(Number(bounty.amount.toString()) / 1e18).toFixed(4)} ETH
                             </span>
                           </td>
                           <td className="py-3 pr-4">
                             <StatusBadge isOpen={bounty.isOpen} isCompleted={bounty.isCompleted} />
                           </td>
-                          <td className="py-3 text-gray-600 text-xs">
+                          <td className="py-3 text-stone-600 text-xs">
                             {bounty.rewardee_username || "—"}
                           </td>
                         </tr>

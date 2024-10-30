@@ -30,12 +30,12 @@ function StatusBadge({ isOpen, isCompleted }) {
     );
   if (isOpen)
     return (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-sky-500/10 text-sky-400 border border-sky-500/20">
         Open
       </span>
     );
   return (
-    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
       In Progress
     </span>
   );
@@ -43,22 +43,22 @@ function StatusBadge({ isOpen, isCompleted }) {
 
 function SkeletonCard() {
   return (
-    <div className="bg-[#111827]/80 border border-white/10 rounded-2xl p-6 animate-pulse">
+    <div className="bg-[#1a1814]/80 border border-[#2a2520] rounded-2xl p-6 animate-pulse">
       <div className="flex justify-between items-start mb-3">
-        <div className="h-4 bg-white/10 rounded w-3/4" />
-        <div className="h-5 bg-white/10 rounded-full w-16" />
+        <div className="h-4 bg-[#2a2520] rounded w-3/4" />
+        <div className="h-5 bg-[#2a2520] rounded-full w-16" />
       </div>
-      <div className="h-3 bg-white/10 rounded w-1/2 mb-4" />
+      <div className="h-3 bg-[#2a2520] rounded w-1/2 mb-4" />
       <div className="flex justify-between items-center">
-        <div className="h-5 bg-white/10 rounded-full w-20" />
-        <div className="h-4 bg-white/10 rounded w-24" />
+        <div className="h-5 bg-[#2a2520] rounded-full w-20" />
+        <div className="h-4 bg-[#2a2520] rounded w-24" />
       </div>
     </div>
   );
 }
 
 const AllIssues = () => {
-  const { data, isPending, error } = useReadContract({
+  const { data, isPending } = useReadContract({
     contract,
     method:
       "function getBounties() view returns ((uint256 id, string issueLink, uint256 amount, address creator, address rewardedTo, address[] assignedTo, bool isOpen, bool isCompleted, string rewardee_username)[])",
@@ -146,25 +146,25 @@ const AllIssues = () => {
 
   return (
     <div
-      className="min-h-screen bg-[#0d0d1a] text-white"
+      className="min-h-screen bg-[#0f0e0c] text-[#fafaf9]"
       style={{
         backgroundImage:
-          "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0)",
-        backgroundSize: "32px 32px",
+          "radial-gradient(circle at 1px 1px, rgba(245,158,11,0.04) 1px, transparent 0)",
+        backgroundSize: "36px 36px",
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white">Open Bounties</h1>
-            <p className="text-gray-500 mt-1 text-sm">
+            <h1 className="text-3xl font-bold text-[#fafaf9]">Open Bounties</h1>
+            <p className="text-[#78716c] mt-1 text-sm">
               {isPending ? "Loading…" : `${bounties.length} bounties across all repos`}
             </p>
           </div>
           <button
             onClick={() => setSortDesc(!sortDesc)}
-            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors self-start sm:self-auto"
+            className="flex items-center gap-2 px-4 py-2 text-sm text-stone-400 hover:text-[#fafaf9] bg-[#1a1814] hover:bg-[#2a2520] border border-[#2a2520] rounded-lg transition-colors self-start sm:self-auto"
           >
             <ArrowUpDown size={14} />
             Amount {sortDesc ? "High → Low" : "Low → High"}
@@ -175,14 +175,14 @@ const AllIssues = () => {
         <div className="relative mb-6">
           <Search
             size={16}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-500"
           />
           <input
             type="text"
             placeholder="Search by issue title, repo, or contributor…"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 bg-[#111827]/80 border border-white/10 rounded-xl text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:border-purple-500/50 transition-colors"
+            className="w-full pl-11 pr-4 py-3 bg-[#1a1814] border border-[#2a2520] rounded-xl text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-amber-500/40 transition-colors"
           />
         </div>
 
@@ -194,8 +194,8 @@ const AllIssues = () => {
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-colors ${
                 activeTab === tab
-                  ? "bg-purple-500/20 text-purple-300 border border-purple-500/30"
-                  : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
+                  ? "bg-amber-500/15 text-amber-400 border border-amber-500/30"
+                  : "text-stone-500 hover:text-stone-300 hover:bg-[#2a2520]"
               }`}
             >
               {tab}
@@ -211,7 +211,7 @@ const AllIssues = () => {
             ))}
           </div>
         ) : filteredBounties.length === 0 ? (
-          <div className="text-center py-20 text-gray-600">
+          <div className="text-center py-20 text-stone-600">
             <p className="text-lg mb-1">No bounties found</p>
             <p className="text-sm">Try adjusting your search or filter</p>
           </div>
@@ -220,28 +220,30 @@ const AllIssues = () => {
             {filteredBounties.map((bounty) => (
               <div
                 key={bounty.id}
-                className="group bg-[#111827]/80 border border-white/10 hover:border-purple-500/30 rounded-2xl p-6 transition-colors backdrop-blur-sm"
+                className="group bg-[#1a1814]/80 border border-[#2a2520] hover:border-amber-500/25 rounded-2xl p-6 transition-colors backdrop-blur-sm"
               >
                 <div className="flex justify-between items-start gap-3 mb-2">
-                  <h3 className="text-sm font-medium text-gray-200 leading-snug line-clamp-2">
-                    {issueTitles[bounty.id] || "Loading title…"}
+                  <h3 className="text-sm font-medium text-stone-200 leading-snug line-clamp-2">
+                    {issueTitles[bounty.id] !== undefined
+                      ? issueTitles[bounty.id] || bounty.issueLink.replace("https://github.com/", "")
+                      : "Loading title…"}
                   </h3>
                   <StatusBadge isOpen={bounty.isOpen} isCompleted={bounty.isCompleted} />
                 </div>
 
-                <p className="text-xs text-gray-600 mb-5 font-mono">
+                <p className="text-xs text-stone-600 mb-5 font-mono">
                   {parseRepo(bounty.issueLink)}
                 </p>
 
                 <div className="flex items-center justify-between">
-                  <span className="px-3 py-1 bg-purple-500/10 border border-purple-500/20 rounded-full text-sm font-semibold text-purple-300">
+                  <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full text-sm font-semibold text-amber-400">
                     {(bounty.amount / 1e18).toFixed(4)} ETH
                   </span>
                   <a
                     href={bounty.issueLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300 transition-colors"
+                    className="flex items-center gap-1.5 text-xs text-stone-500 hover:text-stone-300 transition-colors"
                   >
                     View Issue
                     <ExternalLink size={12} />
