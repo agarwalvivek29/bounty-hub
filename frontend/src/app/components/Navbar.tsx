@@ -1,31 +1,18 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ConnectButton, useActiveAccount } from "thirdweb/react";
 import { client } from "../client";
 import { FaGithub } from "react-icons/fa";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 const Navbar = () => {
   const account = useActiveAccount();
   const pathname = usePathname();
-  const [showDropdown, setShowDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setShowDropdown(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    setShowDropdown(false);
     setShowMobileMenu(false);
   }, [pathname]);
 
@@ -51,34 +38,18 @@ const Navbar = () => {
                 >
                   Bounties
                 </Link>
-                <div className="relative" ref={dropdownRef}>
-                  <button
-                    onClick={() => setShowDropdown(!showDropdown)}
-                    className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-stone-400 hover:text-[#fafaf9] hover:bg-[#2a2520] rounded-lg transition-colors"
-                  >
-                    Dashboard
-                    <ChevronDown
-                      size={14}
-                      className={`transition-transform duration-200 ${showDropdown ? "rotate-180" : ""}`}
-                    />
-                  </button>
-                  {showDropdown && (
-                    <div className="absolute top-full left-0 mt-2 w-44 bg-[#1a1814] border border-[#2a2520] rounded-xl shadow-2xl shadow-black/60 overflow-hidden">
-                      <Link
-                        href="/manager"
-                        className="block px-4 py-3 text-sm text-stone-300 hover:text-[#fafaf9] hover:bg-[#2a2520] transition-colors"
-                      >
-                        Maintainer
-                      </Link>
-                      <Link
-                        href="/contributer"
-                        className="block px-4 py-3 text-sm text-stone-300 hover:text-[#fafaf9] hover:bg-[#2a2520] transition-colors"
-                      >
-                        Contributor
-                      </Link>
-                    </div>
-                  )}
-                </div>
+                <Link
+                  href="/manager"
+                  className="px-4 py-2 text-sm font-medium text-stone-400 hover:text-[#fafaf9] hover:bg-[#2a2520] rounded-lg transition-colors"
+                >
+                  Maintainer
+                </Link>
+                <Link
+                  href="/contributer"
+                  className="px-4 py-2 text-sm font-medium text-stone-400 hover:text-[#fafaf9] hover:bg-[#2a2520] rounded-lg transition-colors"
+                >
+                  Contributor
+                </Link>
               </>
             )}
           </div>
