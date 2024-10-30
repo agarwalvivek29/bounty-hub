@@ -164,7 +164,7 @@ For local development, expose the webhook with [smee.io](https://smee.io) or [ng
 
 ### Install GitHub App
 
-[**Install BountyHub on your repo →**](https://github.com/apps/tst-app-vivk/installations/new)
+[**Install BountyHub on your repo →**](https://github.com/apps/bounty-birbal-bot/installations/new)
 
 ---
 

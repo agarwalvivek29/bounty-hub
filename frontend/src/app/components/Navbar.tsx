@@ -8,9 +8,9 @@ import { FaGithub } from "react-icons/fa";
 import { Menu, X } from "lucide-react";
 
 const NAV_LINKS = [
-  { href: "/bounties", label: "Bounties" },
-  { href: "/manager", label: "Maintainer" },
-  { href: "/contributer", label: "Contributor" },
+  { href: "/bounties", label: "Bounties", public: true },
+  { href: "/manager", label: "Maintainer", public: false },
+  { href: "/contributer", label: "Contributor", public: false },
 ];
 
 const Navbar = () => {
@@ -38,23 +38,22 @@ const Navbar = () => {
 
           {/* Desktop Nav */}
           <div className="hidden sm:flex items-center gap-1">
-            {account &&
-              NAV_LINKS.map(({ href, label }) => {
-                const isActive = pathname === href;
-                return (
-                  <Link
-                    key={href}
-                    href={href}
-                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                      isActive
-                        ? "text-amber-400 bg-amber-500/10"
-                        : "text-stone-400 hover:text-[#fafaf9] hover:bg-[#2a2520]"
-                    }`}
-                  >
-                    {label}
-                  </Link>
-                );
-              })}
+            {NAV_LINKS.filter(({ public: pub }) => pub || account).map(({ href, label }) => {
+              const isActive = pathname === href;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    isActive
+                      ? "text-amber-400 bg-amber-500/10"
+                      : "text-stone-400 hover:text-[#fafaf9] hover:bg-[#2a2520]"
+                  }`}
+                >
+                  {label}
+                </Link>
+              );
+            })}
           </div>
 
           {/* Right side */}
@@ -85,8 +84,7 @@ const Navbar = () => {
         {/* Mobile Menu */}
         {showMobileMenu && (
           <div className="sm:hidden border-t border-[#2a2520] py-3 space-y-0.5">
-            {account &&
-              NAV_LINKS.map(({ href, label }) => {
+            {NAV_LINKS.filter(({ public: pub }) => pub || account).map(({ href, label }) => {
                 const isActive = pathname === href;
                 return (
                   <Link
