@@ -99,7 +99,7 @@ const ContributorDashboard = () => {
           <p className="text-[#78716c] text-sm mb-6">
             Connect your wallet to view your earnings and assigned bounties.
           </p>
-          <ConnectButton client={client} />
+          <ConnectButton client={client} theme="dark" />
         </div>
       </div>
     );

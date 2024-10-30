@@ -135,7 +135,7 @@ const ManagerDashboard = () => {
           <p className="text-[#78716c] text-sm mb-6">
             Connect your wallet to manage bounties and track your repos.
           </p>
-          <ConnectButton client={client} />
+          <ConnectButton client={client} theme="dark" />
         </div>
       </div>
     );

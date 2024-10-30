@@ -21,6 +21,11 @@ function parseRepo(issueLink) {
   return match ? `${match[1]}/${match[2]}` : issueLink;
 }
 
+function parseIssueRef(issueLink) {
+  const match = issueLink.match(/github\.com\/([^/]+)\/([^/]+)\/issues\/(\d+)/);
+  return match ? `${match[1]}/${match[2]} #${match[3]}` : issueLink.replace("https://github.com/", "");
+}
+
 function StatusBadge({ isOpen, isCompleted }) {
   if (isCompleted)
     return (
@@ -96,14 +101,19 @@ const AllIssues = () => {
             );
             if (match) {
               const [, owner, repo, issue_number] = match;
+              const headers = {};
+              if (process.env.NEXT_PUBLIC_GITHUB_TOKEN) {
+                headers["Authorization"] = `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`;
+              }
               const response = await fetch(
-                `https://api.github.com/repos/${owner}/${repo}/issues/${issue_number}`
+                `https://api.github.com/repos/${owner}/${repo}/issues/${issue_number}`,
+                { headers }
               );
               if (response.ok) {
                 const issueData = await response.json();
                 titles[bounty.id] = issueData.title;
               } else {
-                titles[bounty.id] = null;
+                titles[bounty.id] = parseIssueRef(bounty.issueLink);
               }
             } else {
               titles[bounty.id] = null;
@@ -225,8 +235,8 @@ const AllIssues = () => {
                 <div className="flex justify-between items-start gap-3 mb-2">
                   <h3 className="text-sm font-medium text-stone-200 leading-snug line-clamp-2">
                     {issueTitles[bounty.id] !== undefined
-                      ? issueTitles[bounty.id] || bounty.issueLink.replace("https://github.com/", "")
-                      : "Loading title…"}
+                      ? issueTitles[bounty.id] || parseIssueRef(bounty.issueLink)
+                      : parseIssueRef(bounty.issueLink)}
                   </h3>
                   <StatusBadge isOpen={bounty.isOpen} isCompleted={bounty.isCompleted} />
                 </div>

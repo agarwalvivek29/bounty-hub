@@ -7,13 +7,21 @@ import { client } from "../client";
 import { FaGithub } from "react-icons/fa";
 import { Menu, X } from "lucide-react";
 
+const NAV_LINKS = [
+  { href: "/bounties", label: "Bounties" },
+  { href: "/manager", label: "Maintainer" },
+  { href: "/contributer", label: "Contributor" },
+];
+
 const Navbar = () => {
   const account = useActiveAccount();
   const pathname = usePathname();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
+  // Fix: defer state update to avoid "setState during render" React crash
   useEffect(() => {
-    setShowMobileMenu(false);
+    const t = setTimeout(() => setShowMobileMenu(false), 0);
+    return () => clearTimeout(t);
   }, [pathname]);
 
   return (
@@ -30,28 +38,23 @@ const Navbar = () => {
 
           {/* Desktop Nav */}
           <div className="hidden sm:flex items-center gap-1">
-            {account && (
-              <>
-                <Link
-                  href="/bounties"
-                  className="px-4 py-2 text-sm font-medium text-stone-400 hover:text-[#fafaf9] hover:bg-[#2a2520] rounded-lg transition-colors"
-                >
-                  Bounties
-                </Link>
-                <Link
-                  href="/manager"
-                  className="px-4 py-2 text-sm font-medium text-stone-400 hover:text-[#fafaf9] hover:bg-[#2a2520] rounded-lg transition-colors"
-                >
-                  Maintainer
-                </Link>
-                <Link
-                  href="/contributer"
-                  className="px-4 py-2 text-sm font-medium text-stone-400 hover:text-[#fafaf9] hover:bg-[#2a2520] rounded-lg transition-colors"
-                >
-                  Contributor
-                </Link>
-              </>
-            )}
+            {account &&
+              NAV_LINKS.map(({ href, label }) => {
+                const isActive = pathname === href;
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      isActive
+                        ? "text-amber-400 bg-amber-500/10"
+                        : "text-stone-400 hover:text-[#fafaf9] hover:bg-[#2a2520]"
+                    }`}
+                  >
+                    {label}
+                  </Link>
+                );
+              })}
           </div>
 
           {/* Right side */}
@@ -67,10 +70,11 @@ const Navbar = () => {
             </a>
             <ConnectButton
               client={client}
+              theme="dark"
               detailsButton={{ style: { maxHeight: "40px", minWidth: "120px" } }}
             />
             <button
-              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              onClick={() => setShowMobileMenu((v) => !v)}
               className="sm:hidden p-2 text-stone-400 hover:text-[#fafaf9] transition-colors"
             >
               {showMobileMenu ? <X size={20} /> : <Menu size={20} />}
@@ -81,28 +85,23 @@ const Navbar = () => {
         {/* Mobile Menu */}
         {showMobileMenu && (
           <div className="sm:hidden border-t border-[#2a2520] py-3 space-y-0.5">
-            {account && (
-              <>
-                <Link
-                  href="/bounties"
-                  className="block px-4 py-2.5 text-sm text-stone-300 hover:text-[#fafaf9] hover:bg-[#2a2520] rounded-lg transition-colors"
-                >
-                  Bounties
-                </Link>
-                <Link
-                  href="/manager"
-                  className="block px-4 py-2.5 text-sm text-stone-300 hover:text-[#fafaf9] hover:bg-[#2a2520] rounded-lg transition-colors"
-                >
-                  Maintainer Dashboard
-                </Link>
-                <Link
-                  href="/contributer"
-                  className="block px-4 py-2.5 text-sm text-stone-300 hover:text-[#fafaf9] hover:bg-[#2a2520] rounded-lg transition-colors"
-                >
-                  Contributor Dashboard
-                </Link>
-              </>
-            )}
+            {account &&
+              NAV_LINKS.map(({ href, label }) => {
+                const isActive = pathname === href;
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={`block px-4 py-2.5 text-sm rounded-lg transition-colors ${
+                      isActive
+                        ? "text-amber-400 bg-amber-500/10"
+                        : "text-stone-300 hover:text-[#fafaf9] hover:bg-[#2a2520]"
+                    }`}
+                  >
+                    {label}
+                  </Link>
+                );
+              })}
             <a
               href="https://github.com/apps/bounty-birbal-bot/installations/new"
               target="_blank"
