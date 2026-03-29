@@ -1,4 +1,11 @@
 node_modules
 dist
-gitbot/.env
 .gstack/
+
+# Env files - never commit real secrets
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+**/.env.*.local
